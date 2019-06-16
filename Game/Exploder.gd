@@ -9,6 +9,8 @@ var time = 0;
 var effects = [];
 var chain = 0;
 
+# TOOD: Split model and view!
+
 func initialize():
 	to_explode = self.get_used_cells();
 	to_explode_copy = to_explode.duplicate(false)
@@ -18,10 +20,25 @@ func initialize():
 		var temp = $"Particles2D".duplicate();
 		effects.append(temp);
 		self.add_child(temp);
-
-	$"Label".text = str(chain);
-	$"Label".rect_position = self.map_to_world(to_explode[-1]);
 	
+	var combo = len(to_explode);
+	if (chain != 1):
+		$"HBoxContainer/Chain/Label".text = "x" + str(chain);
+	else:
+		$"HBoxContainer/Chain".free()
+	if (combo > 3):
+		$"HBoxContainer/Combo/Label".text = str(combo);
+	else:
+		$"HBoxContainer/Combo".free()
+	$"HBoxContainer".rect_position = self.map_to_world(to_explode[-1]) + self.cell_size/2;
+	$"HBoxContainer".rect_position -= $"HBoxContainer".rect_size / 2;
+
+func _process(delta):
+	var speed = 20 * (0.2 - time);
+	
+	$"HBoxContainer".rect_position.y -= delta * self.cell_size.y * speed;
+	$"HBoxContainer".modulate.a *= 0.95;
+
 func _physics_process(delta):
 	time += delta;
 	if len(to_explode) != 0:

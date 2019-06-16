@@ -19,6 +19,9 @@ var raise = false;
 var fractional_raise = 0;
 var visual_shake = 0; # in pixels
 
+var grace = 0;
+var pause = 0;
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#### handle model
@@ -35,7 +38,7 @@ func _ready():
 		for row in range(len(board[col])):
 			chain_checker[col].append(1);
 		
-#	board[5][7] = -1;
+	grace = $"..".grace_period;
 	
 	#### handle view
 	# position everything
@@ -92,19 +95,23 @@ func _physics_process(delta):
 #				self.board[x].remove(y);
 #	finish_clearing.clear();
 	
-	if (self.fractional_raise < 1):
-		if ($"Exploders".get_child_count() == 0 and self.has_space()):
-			if raise:
-				self.fractional_raise += delta * 5;
+	if ($"Exploders".get_child_count() == 0):
+		if self.has_space():
+			if (self.fractional_raise < 1):
+				if raise:
+					self.fractional_raise += delta * 5;
+				else:
+					self.fractional_raise += delta * $"..".rising_speed;
 			else:
-				self.fractional_raise += delta * $"..".rising_speed;
+				self.raise = false;
+				self.true_raise()
+				grace = $"..".grace_period;
 		else:
-			self.raise = false;
-	else: #(self.fractional_raise >= 1):
-		if (self.has_space()):
-			self.true_raise()
-		else:
-			pass
+			grace -= delta;
+			if (grace <= 0):
+				$"..".emit_signal("lost");
+				print("i lost")
+				self.set_physics_process(false);
 
 func true_raise():
 #	for col in clearing:
@@ -137,9 +144,9 @@ func has_space():
 	for array in board:
 		if len(array) >= get_parent().board_height:
 			return false;
-	for faller in $"Fallers".get_children():
-		if floor(faller.faller_y) + len(faller.blocks) >= get_parent().board_height:
-			return false;
+#	for faller in $"Fallers".get_children():
+#		if floor(faller.faller_y) + len(faller.blocks) >= get_parent().board_height:
+#			return false;
 	
 	return true
 
@@ -169,6 +176,8 @@ func check():
 					any_clears = true;
 	
 	if (any_clears):
+		self.raise = false; # cut short any raising
+		
 #		self.next_clear_id += 1;
 		var exploder = exploder_scene.instance();
 #		exploder.exploder_id = self.next_clear_id;
@@ -192,6 +201,8 @@ func check():
 										self.board[x+x_off][y+y_off] = $"..".CLEARING;
 							
 		exploder.initialize()
+		$"..".emit_signal("combo", len(exploder.to_explode));
+		$"..".emit_signal("chain", exploder.chain);
 #		print(exploder.position);
 		$Exploders.add_child(exploder);
 	
@@ -256,6 +267,9 @@ func receive_garbage(points):
 
 
 func swap(x, y):
+	if not self.is_physics_processing():
+		return
+	
 	# Prevent swapping with clearing blocks
 	if y < len(self.board[x]):
 		if self.board[x][y] == 5:

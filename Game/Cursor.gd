@@ -17,6 +17,8 @@ func _process(delta):
 		self.cursor_right();
 	if (Input.is_action_just_pressed($"../..".player + "_swap")):
 		self.cursor_swap();
+	if (Input.is_action_just_pressed($"../..".player + "_swap2")):
+		self.cursor_swap();
 	if (Input.is_action_pressed($"../..".player + "_raise")):
 		$"..".raise = true;
 	pass

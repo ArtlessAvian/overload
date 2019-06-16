@@ -12,7 +12,6 @@
 polygon = PoolVector2Array( 60, 120, 60, -120, -60, -120, -60, 120 )
 
 [node name="Board" type="Node2D"]
-position = Vector2( 312.204, 334.723 )
 scale = Vector2( 2, 2 )
 script = ExtResource( 1 )
 
