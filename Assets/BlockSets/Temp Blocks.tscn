@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://icon.png" type="Texture" id=1]
+
+[node name="Temp Blocks" type="Node2D"]
+
+[node name="Sprite" type="Sprite" parent="."]
+modulate = Color( 1, 0, 0, 1 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 2, 2, 20, 20 )
+
+[node name="Sprite2" type="Sprite" parent="."]
+modulate = Color( 0.803922, 1, 0, 1 )
+position = Vector2( 94.5374, 1.89073 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 2, 2, 20, 20 )
+
+[node name="Sprite3" type="Sprite" parent="."]
+modulate = Color( 1, 0.494118, 0, 1 )
+position = Vector2( 44.1175, -3.15125 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 2, 2, 20, 20 )
+
+[node name="Sprite4" type="Sprite" parent="."]
+modulate = Color( 0, 0.0862745, 1, 1 )
+position = Vector2( 136.764, 3.78149 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 2, 2, 20, 20 )
+
+[node name="Sprite5" type="Sprite" parent="."]
+modulate = Color( 0, 0.952941, 1, 1 )
+position = Vector2( 182.142, -2.521 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 2, 2, 20, 20 )
+
+[node name="Sprite6" type="Sprite" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 248.318, -1.89075 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 2, 2, 20, 20 )
+
+[node name="Sprite7" type="Sprite" parent="."]
+position = Vector2( 185.293, 68.0671 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 22, 22, 20, 20 )

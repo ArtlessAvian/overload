@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Assets/BlockSets/Test2.tres" type="TileSet" id=1]
+[ext_resource path="res://Game/Exploder.gd" type="Script" id=2]
+[ext_resource path="res://Assets/poof.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Master Hand - Gun Fingers.wav" type="AudioStream" id=4]
+
+[sub_resource type="Gradient" id=2]
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+
+[sub_resource type="ParticlesMaterial" id=1]
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 50.0
+initial_velocity_random = 1.0
+angular_velocity = 6.40969e-010
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+color_ramp = SubResource( 3 )
+
+[node name="Exploder" type="TileMap"]
+self_modulate = Color( 0.784314, 0.784314, 0.784314, 1 )
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 20, 20 )
+format = 1
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Particles2D" type="Particles2D" parent="."]
+light_mask = 0
+emitting = false
+amount = 5
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+local_coords = false
+process_material = SubResource( 1 )
+texture = ExtResource( 3 )
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Particles2D"]
+stream = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = -84.2963
+margin_top = -90.7806
+margin_right = -35.2963
+margin_bottom = -42.7806
+text = "1
+"

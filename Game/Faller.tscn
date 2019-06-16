@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/BlockSets/Test2.tres" type="TileSet" id=1]
+[ext_resource path="res://Game/Faller.gd" type="Script" id=2]
+
+[node name="Faller" type="TileMap"]
+light_mask = 1024
+position = Vector2( 0, -1000 )
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 20, 20 )
+format = 1
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
