@@ -6,6 +6,7 @@ signal combo;
 const EMPTY = -1;
 const CLEARING = 5;
 const GARBAGE = 6;
+const force_raise_speed = 5;
 
 export (String) var player = "kb";
 

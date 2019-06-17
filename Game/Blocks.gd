@@ -99,7 +99,7 @@ func _physics_process(delta):
 		if self.has_space():
 			if (self.fractional_raise < 1):
 				if raise:
-					self.fractional_raise += delta * 5;
+					self.fractional_raise += delta * $"..".force_raise_speed;
 				else:
 					self.fractional_raise += delta * $"..".rising_speed;
 			else:

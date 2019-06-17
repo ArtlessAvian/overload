@@ -26,7 +26,7 @@ color_ramp = SubResource( 2 )
 [node name="Exploder" type="TileMap"]
 self_modulate = Color( 0.784314, 0.784314, 0.784314, 1 )
 tile_set = ExtResource( 1 )
-cell_size = Vector2( 20, 20 )
+cell_size = Vector2( 40, 40 )
 format = 1
 script = ExtResource( 2 )
 __meta__ = {

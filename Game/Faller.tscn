@@ -7,7 +7,7 @@
 light_mask = 1024
 position = Vector2( 0, -1000 )
 tile_set = ExtResource( 1 )
-cell_size = Vector2( 20, 20 )
+cell_size = Vector2( 40, 40 )
 format = 1
 script = ExtResource( 2 )
 __meta__ = {
