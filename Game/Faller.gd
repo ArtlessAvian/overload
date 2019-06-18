@@ -1,4 +1,6 @@
 extends TileMap
+# Always a child of a child of Blocks.
+
 # Fallers are groups of blocks traveling together.
 # While falling, they may not be swapped. No bullshitting with that lmao.
 # Theres no hovering like in a certain other game, for simplicity.
@@ -15,45 +17,49 @@ func redraw():
 		self.set_cell(faller_x, -j-1, blocks[j]);
 		assert(blocks[j] != 5);
 
+func _process(_delta):
+	self.position.y = self.faller_y
+	self.position.y *= self.get_blocks().cell_size.y;
+	self.position.y *= -1;
+
 func _physics_process(delta):
 #	if len(blocks) == 0:
 #		self.queue_free();
 #		return;
 	
-	faller_y -= delta * $"../../..".faller_speed;
+	faller_y -= delta * self.get_board().faller_speed;
 	# Collide
-	var column = $"../..".board[faller_x];
+	var column = self.get_blocks().board[faller_x];
 	if faller_y <= len(column):
-#		if true:
-		if ceil(faller_y) - 1 < 0 or column[ceil(faller_y) - 1] != -1: # if the below tile is not an overhang, keep going.
-#			while (ceil(faller_y) < len(column) and not column[ceil(faller_y)-1] in [5, -1]):
-#				faller_y += 1;
+		if ceil(faller_y) - 1 < 0 or column[ceil(faller_y) - 1] != $"../../..".EMPTY:
+			# Has colldied
+			place_in_column(ceil(faller_y));
+			# Cleanup and destroy
+			self.get_blocks().queue_check = true;
+#			get_parent().remove_child(self);
+			self.queue_free();
 
-			var chain_column = $"../..".chain_checker[faller_x];
-			for y in range(len(blocks)):
-				if ceil(faller_y + y) >= len(column):
-					column.append(blocks[y])
-					chain_column.append(chain);
-				else:
-					column[ceil(faller_y + y)] = blocks[y];
-					chain_column[ceil(faller_y+y)] = chain;
-#		if faller_y < 0 or (column[floor(faller_y)] != -1):
-#			# Walk up until a -1 or the end of the array is found.
-#			var insertion = max(0,floor(faller_y));
-#			while insertion != len(column) and column[insertion] == -1:
-#				insertion += 1;
-#			# Add to the board, then remove 
-#			if insertion == len(column):
-#				for y in range(len(blocks)):
-#					column.append(blocks[y]);
-#			else:
-#				for y in range(len(blocks)):
-#					column[y + insertion] = blocks[y];
-#			while column.back() == 5:
-#				column.pop_back();
-			$"../..".should_check = true;
-			get_parent().remove_child(self);
-			self.queue_free()
+func place_in_column(y):
+	var column = $"../..".board[faller_x];
+	var chain_column = $"../..".chain_checker[faller_x];
+	# Adjust the Y value
+	
+	y = max(y, 0); # oof
+	
+	# There is a possibility that the faller could tunnel so hard
+	# that it passes through a whole set of blocks and into some empty section. 
+	while (y < len(column)) and (column[y] != self.get_board().EMPTY):
+		# March upwards
+		y += 1;
+	
+	for index in range(len(blocks)):
+		if y + index >= len(column):
+			column.append(blocks[index])
+			chain_column.append(chain);
+		else:
+			assert(column[y + index] == self.get_board().EMPTY);
+			column[y + index] = blocks[index];
+			chain_column[y + index] = chain;
 
 func intersects(x, y):
 	if x != self.faller_x:
@@ -66,3 +72,10 @@ func intersects(x, y):
 
 func true_raise():
 	faller_y += 1;
+	
+# Parents:
+func get_blocks():
+	return $"../..";
+
+func get_board():
+	return $"../../..";

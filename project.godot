@@ -23,6 +23,10 @@ config/icon="res://icon.png"
 
 RandomPusher="*res://Misc/RandomPusher.gd"
 
+[debug]
+
+gdscript/warnings/treat_warnings_as_errors=true
+
 [display]
 
 window/size/width=1280

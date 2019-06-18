@@ -1,6 +1,6 @@
 extends Node
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if (randf() > 0.9):
 		Input.action_press("rand_down");
 	elif (randf() > 0.9):

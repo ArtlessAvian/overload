@@ -1,4 +1,5 @@
 extends Node2D
+#warning-ignore-all:unused_signal
 signal lost;
 signal chain;
 signal combo;
@@ -8,6 +9,7 @@ const CLEARING = 5;
 const GARBAGE = 6;
 const force_raise_speed = 5;
 
+#warning-ignore-all:unused_class_variable
 export (String) var player = "kb";
 
 export (int) var board_width = 6;

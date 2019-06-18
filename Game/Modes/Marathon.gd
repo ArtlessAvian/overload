@@ -18,11 +18,11 @@ func start_boards():
 	$"Board/Blocks".set_process(true);
 	$"Board/Blocks".set_physics_process(true);
 
-func _process(delta):
+func _process(_delta):
 	$Grace.text = str($"Board/Blocks".grace);
 
 func _on_Board_chain(chain):
-	for i in range(chain - len(chains)):
+	while len(chains) <= chain-1:
 		chains.append(0);
 	chains[chain - 1] += 1;
 	print(chains)
@@ -30,7 +30,7 @@ func _on_Board_chain(chain):
 	$Points.text = str(points);
 
 func _on_Board_combo(combo):
-	for i in range(combo - 2 - len(combos)):
+	while len(combos) <= combo-3:
 		combos.append(0);
 	combos[combo - 3] += 1;
 	print(combos)

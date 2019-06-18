@@ -2,41 +2,31 @@ extends TileMap
 # Always belongs to a board, as a direct child.
 
 # Model
-const faller_scene = preload("res://Game/Faller.tscn");
-const exploder_scene = preload("res://Game/Exploder.tscn");
-const explode_pause = 0.5;
-const explode_frequency = 0.1;
+const FALLER_SCENE = preload("res://Game/Faller.tscn");
+const EXPLODER_SCENE = preload("res://Game/Exploder.tscn");
 
 var board = []; # outer array is the column. inner array is the row.
-var chain_checker = [] # matches board.
 var new_row = [];
-var should_check = false;
-#var next_clear_id = 0;
-#var clearing = []; # id blocks to clearing groups
-#var finish_clearing = []; # ids of blocks to cause fallers
+var chain_checker = [] # should act in parallel with the board.
+var queue_check = false;
 
-var raise = false;
+var force_raise = false;
 var fractional_raise = 0;
-var visual_shake = 0; # in pixels
+var line_count = 0;
 
+var queue_swap = null;
 var grace = 0;
-var pause = 0;
+#var pause = 0;
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	#### handle model
-	for col in range(get_parent().board_width):
+	for _col in range(get_parent().board_width):
 		board.append([]);
-#		clearing.append([]);
-		for row in range(get_parent().board_height/2):
-			board[col].append(randi() % get_parent().color_count)
-		new_row.append(randi() % get_parent().color_count)
-
-	# Mirror the board
-	for col in range(len(board)):
 		chain_checker.append([])
-		for row in range(len(board[col])):
-			chain_checker[col].append(1);
+		new_row.append(-1);
+	
+	for row in range(get_parent().board_height/2):
+		prepend_line(row == 0)
 		
 	grace = $"..".grace_period;
 	
@@ -49,9 +39,10 @@ func _ready():
 #	$Cursor.position *= self.cell_size;
 #	$Cursor.position.y *= -1;
 
-func _process(delta):
+func _process(_delta):
 	# handle view.
 	# yeah it updates every frame, whatever.
+	# technically its O(1) :)
 	self.clear()
 	for col in range(get_parent().board_width):
 		for row in range(min(get_parent().board_height, len(board[col]))):
@@ -61,32 +52,18 @@ func _process(delta):
 	self.position.y = get_parent().board_height/2;
 	self.position.y -= min(1, self.fractional_raise);
 	self.position.y *= self.cell_size.y;
-#	self.position.y += self.visual_shake;
-	
-	$Cursor.position = $Cursor.cursor_pos;
-	$Cursor.position += $Cursor.DRAW_OFFSET;
-	$Cursor.position *= self.cell_size;
-	$Cursor.position.y *= -1;
-
-	for faller in $"Fallers".get_children():
-		faller.position.y = faller.faller_y
-		faller.position.y *= self.cell_size.y;
-		faller.position.y *= -1;
-	for exploder in $"Exploders".get_children():
-#		exploder.position.x += 10 * (randf() - 0.5);
-#		exploder.position.y += 10 * (randf() - 0.5);
-		exploder.position.y = exploder.y_offset;
-		exploder.position.y *= self.cell_size.y;
-		exploder.position.y *= -1;
-		pass
 
 func _physics_process(delta):
 	if (Input.is_action_just_pressed("ui_home")):
 		self.receive_garbage(20);
 	
-	if (should_check):
+	if (self.queue_swap != null):
+		self.swap(self.queue_swap.x, self.queue_swap.y);
+		self.queue_swap = null;
+	
+	if (self.queue_check):
 		self.check();
-		should_check = false;
+		self.queue_check = false;
 	
 #	for x in range(len(clearing)):
 #		for y in range(len(clearing[x])-1, -1, -1):
@@ -98,32 +75,37 @@ func _physics_process(delta):
 	if ($"Exploders".get_child_count() == 0):
 		if self.has_space():
 			if (self.fractional_raise < 1):
-				if raise:
-					self.fractional_raise += delta * $"..".force_raise_speed;
-				else:
-					self.fractional_raise += delta * $"..".rising_speed;
+				self.fractional_raise += delta * \
+					($"..".force_raise_speed if self.force_raise else $"..".rising_speed);
 			else:
-				self.raise = false;
+				self.force_raise = false;
 				self.true_raise()
-				grace = $"..".grace_period;
+			grace = $"..".grace_period;
 		else:
+			self.force_raise = false;
 			grace -= delta;
 			if (grace <= 0):
 				$"..".emit_signal("lost");
 				print("i lost")
 				self.set_physics_process(false);
 
+func prepend_line(first = false):
+	for i in range(len(board)):
+#		var block_index = i + self.line_count * self.get_parent().board_width;
+		if (first):
+			new_row[i] = randi() % get_parent().color_count;
+		board[i].push_front(new_row[i]);
+		chain_checker[i].push_front(1);
+		self.line_count += 1;
+		new_row[i] = randi() % get_parent().color_count;
+
 func true_raise():
 #	for col in clearing:
 #		col.pop_back();
 #		col.push_front(-1);
-
-	for i in range(len(board)):
-		board[i].push_front(new_row[i]);
-		chain_checker[i].push_front(1);
-		new_row[i] = randi() % get_parent().color_count;
+	self.prepend_line();
 	
-	self.raise = false;
+	self.force_raise = false;
 	self.fractional_raise -= 1;
 	
 	# Would do self, but then that recurs.
@@ -133,26 +115,22 @@ func true_raise():
 	self.check();
 
 func has_space():
+	# Pop trailing empty spaces.
 	for i in range(len(board)):
-		for dummy in range(len(board[i])):
-			if board[i].back() == $"..".EMPTY:
-				board[i].pop_back();
-				chain_checker[i].pop_back();
-			else:
-				break;
-	
+		while not board[i].empty() and board[i].back() == $"..".EMPTY:
+			board[i].pop_back();
+			chain_checker[i].pop_back();
+	# Now there shouldn't be any empty spaces to overcount.
+	 
 	for array in board:
 		if len(array) >= get_parent().board_height:
 			return false;
-#	for faller in $"Fallers".get_children():
-#		if floor(faller.faller_y) + len(faller.blocks) >= get_parent().board_height:
-#			return false;
 	
 	return true
 
 func check():
 	var any_clears = false;
-	var to_clear = [];
+	var to_clear = []; # Consider changing to a set
 	for x in range(len(board)):
 		to_clear.append([]);
 		var the_spread = spread(in_a_row(board[x]))
@@ -161,13 +139,18 @@ func check():
 			if (item >= 3):
 				any_clears = true;
 
-	for y in range(get_parent().board_height):
+	# Assumes there isn't anything to check above the board.
+
+	for y in range(get_parent().board_height): 
+		# Build the row
 		var row = [];
 		for x in range(len(board)):
 			if y < len(board[x]):
 				row.append(board[x][y]);
 			else:
 				row.append($"..".EMPTY);
+		
+		# Check the row
 		var the_spread = spread(in_a_row(row));
 		for x in range(len(board)):
 			if y < len(board[x]):
@@ -176,39 +159,42 @@ func check():
 					any_clears = true;
 	
 	if (any_clears):
-		self.raise = false; # cut short any raising
+		self.do_clears(to_clear)
 		
-#		self.next_clear_id += 1;
-		var exploder = exploder_scene.instance();
-#		exploder.exploder_id = self.next_clear_id;
-		for x in range(len(board)):
-			for y in range(len(board[x])-1, -1, -1):
-				if (to_clear[x][y]):
-#					self.clearing[x][y] = self.next_clear_id;
-					exploder.set_cell(x, -y-1, self.board[x][y]);
-					self.board[x][y] = $"..".CLEARING;
-					exploder.chain = max(exploder.chain, self.chain_checker[x][y]);
-	#				self.make_faller_column(x, y+1);
-	#				self.board[x].pop_back();
-					
-					# Clear neighboring garbage
-					for x_off in range(-1, 2):
-						for y_off in range(-1, 2):
-							if 0 <= x + x_off and x + x_off < len(board):
-								if 0 <= y + y_off and y + y_off < len(board[x+x_off]):
-									if (self.board[x+x_off][y+y_off] == $"..".GARBAGE):
-										exploder.set_cell(x+x_off, -y-y_off-1, self.board[x+x_off][y+y_off]);
-										self.board[x+x_off][y+y_off] = $"..".CLEARING;
-							
-		exploder.initialize()
-		$"..".emit_signal("combo", len(exploder.to_explode));
-		$"..".emit_signal("chain", exploder.chain);
-#		print(exploder.position);
-		$Exploders.add_child(exploder);
-	
 	for x in range(len(self.chain_checker)):
 		for y in range(len(self.chain_checker[x])):
 			self.chain_checker[x][y] = 1;
+
+func do_clears(to_clear):
+	self.force_raise = false; # cut short any raising
+	
+#		self.next_clear_id += 1;
+	var exploder = EXPLODER_SCENE.instance();
+#		exploder.exploder_id = self.next_clear_id;
+	for x in range(len(board)):
+		for y in range(len(board[x])-1, -1, -1):
+			if (to_clear[x][y]):
+#					self.clearing[x][y] = self.next_clear_id;
+				exploder.set_cell(x, -y-1, self.board[x][y]);
+				self.board[x][y] = $"..".CLEARING;
+				exploder.chain = max(exploder.chain, self.chain_checker[x][y]);
+#				self.make_faller_column(x, y+1);
+#				self.board[x].pop_back();
+				
+				# Clear neighboring garbage
+				for x_off in range(-1, 2):
+					for y_off in range(-1, 2):
+						if 0 <= x + x_off and x + x_off < len(board):
+							if 0 <= y + y_off and y + y_off < len(board[x+x_off]):
+								if (self.board[x+x_off][y+y_off] == $"..".GARBAGE):
+									exploder.set_cell(x+x_off, -y-y_off-1, self.board[x+x_off][y+y_off]);
+									self.board[x+x_off][y+y_off] = $"..".CLEARING;
+						
+	exploder.initialize()
+	$"..".emit_signal("combo", len(exploder.to_explode));
+	$"..".emit_signal("chain", exploder.chain);
+#		print(exploder.position);
+	$Exploders.add_child(exploder);
 
 func make_faller_column(x, y, chain = 1):
 	var column = [];
@@ -232,7 +218,7 @@ func make_faller_column(x, y, chain = 1):
 	if len(column) == 0:
 		return;
 	
-	var faller = faller_scene.instance();
+	var faller = FALLER_SCENE.instance();
 	faller.faller_x = x;
 	faller.faller_y = y;
 	faller.chain = chain;
@@ -251,9 +237,9 @@ func receive_garbage(points):
 	shuffle.shuffle();
 	
 	for i in range(min(points, len(self.board))):
-		var faller = faller_scene.instance();
+		var faller = FALLER_SCENE.instance();
 		faller.blocks = [];
-		for j in range(points/len(self.board) + int(i < points % len(self.board))):
+		for _j in range(points/len(self.board) + int(i < points % len(self.board))):
 			faller.blocks.append($"..".GARBAGE);
 		
 		faller.faller_x = shuffle.pop_back();
@@ -267,9 +253,6 @@ func receive_garbage(points):
 
 
 func swap(x, y):
-	if not self.is_physics_processing():
-		return
-	
 	# Prevent swapping with clearing blocks
 	if y < len(self.board[x]):
 		if self.board[x][y] == 5:
@@ -290,13 +273,13 @@ func swap(x, y):
 	if left_faller == null:
 		if right_faller == null:
 			return;
-		left_faller = faller_scene.instance();
+		left_faller = FALLER_SCENE.instance();
 		left_faller.faller_x = x;
 		left_faller.faller_y = y;
 		$"Fallers".add_child(left_faller);
 		$"Fallers".move_child(left_faller, 0);
 	if right_faller == null:
-		right_faller = faller_scene.instance();
+		right_faller = FALLER_SCENE.instance();
 		right_faller.faller_x = x + 1;
 		right_faller.faller_y = y;
 		$"Fallers".add_child(right_faller);
@@ -342,6 +325,10 @@ func spread(array):
 	var out = [];
 	for i in range(len(array)):
 		if (i == len(array)-1 or array[i] >= array[i+1]):
-			for j in range(array[i]):
+			for _j in range(array[i]):
 				out.append(array[i]);
 	return out;
+
+# Parenting
+func get_board():
+	return self.get_parent();
