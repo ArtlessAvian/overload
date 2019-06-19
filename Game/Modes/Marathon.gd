@@ -21,21 +21,18 @@ func start_boards():
 func _process(_delta):
 	$Grace.text = str($"Board/Blocks".grace);
 
-func _on_Board_chain(chain):
+func _on_Board_clear(_board, chain, combo):
 	while len(chains) <= chain-1:
 		chains.append(0);
 	chains[chain - 1] += 1;
-	print(chains)
 	points += pow(2, chain-1) * 500;
-	$Points.text = str(points);
-
-func _on_Board_combo(combo):
+	
 	while len(combos) <= combo-3:
 		combos.append(0);
 	combos[combo - 3] += 1;
-	print(combos)
 	points += 100 * combo;
+	
 	$Points.text = str(points);
 
-func _on_Board_lost():
+func _on_Board_lost(_board):
 	$"AnimationPlayer".play("Lose");

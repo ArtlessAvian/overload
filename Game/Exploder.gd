@@ -4,9 +4,10 @@ extends TileMap
 # Kinda RAII?
 
 var y_offset = 0;
-var to_explode = [];
+var to_explode = []; # TODO: Rename this and copy.
 var to_explode_copy = [];
-var time = 0;
+var animation_time = 0;
+var physics_time = 0;
 var effects = [];
 var chain = 0;
 
@@ -35,28 +36,23 @@ func initialize():
 	$"HBoxContainer".rect_position -= $"HBoxContainer".rect_size / 2;
 
 func _process(delta):
-	var speed = 20 * (0.2 - time);
+	animation_time += delta;
 	
-	$"HBoxContainer".rect_position.y -= delta * self.cell_size.y * speed;
-	$"HBoxContainer".modulate.a *= 0.95;
-
-func _physics_process(delta):
-	time += delta;
-	if len(to_explode) != 0:
+	if len(self.to_explode) != 0:
 		# TODO: Move to process
 		# Physics Process should only handle the model.
-		while time >= $"../../..".explode_interval and not to_explode.empty():
-			time -= $"../../..".explode_interval;
-			var thing = to_explode.pop_back();
+		while self.animation_time >= self.get_board().explode_interval and not self.to_explode.empty():
+			self.animation_time -= self.get_board().explode_interval;
+			var thing = self.to_explode.pop_back();
 			var color = get_cellv(thing);
 			
 			if (color != $"../../..".GARBAGE):
 				self.set_cellv(thing, -1);
 			else:
 #				self.set_cellv(thing, randi() % 1);
-				self.set_cellv(thing, randi() % $"../../..".color_count);
+				self.set_cellv(thing, randi() % self.get_board().color_count);
 			
-			var effect = effects.pop_back();
+			var effect = self.effects.pop_back();
 			effect.modulate.r = cos((color/5.0) * 2 * PI)/2 + 0.5;
 			effect.modulate.g = cos((color/5.0 - 1/3.0) * 2 * PI)/2 + 0.5;
 			effect.modulate.b = cos((color/5.0 - 2/3.0) * 2 * PI)/2 + 0.5;
@@ -64,17 +60,24 @@ func _physics_process(delta):
 			effect.position += self.cell_size * 0.5;
 			effect.emitting = true;
 			effect.get_child(0).play();
-	else:
-		if (time >= $"../../..".explode_pause):
-			for block in to_explode_copy:
-				var y = -block.y-1 + y_offset;
-				assert(self.get_blocks().board[block.x][y] == $"../../..".CLEARING);
-				self.get_blocks().make_faller_column(block.x, y+1, chain + 1);
-				
-				self.get_blocks().board[block.x][y] = get_cellv(block);
-				self.get_blocks().chain_checker[block.x][y] = chain+1;
+	
+	var popup_speed = 20 * (0.2 - animation_time);
+	$"HBoxContainer".rect_position.y -= delta * self.cell_size.y * popup_speed;
+	$"HBoxContainer".modulate.a *= 0.95;
+
+func _physics_process(delta):
+	physics_time += delta;
+	
+	if physics_time >= (self.get_board().explode_pause + self.get_board().explode_interval * len(to_explode_copy)):
+		for block in to_explode_copy:
+			var y = -block.y-1 + y_offset;
+			assert(self.get_blocks().board[block.x][y] == $"../../..".CLEARING);
+			self.get_blocks().make_faller_column(block.x, y+1, chain + 1);
 			
-			self.queue_free();
+			self.get_blocks().board[block.x][y] = get_cellv(block);
+			self.get_blocks().chain_checker[block.x][y] = chain+1;
+		
+		self.queue_free();
 
 func true_raise():
 	y_offset += 1;
@@ -82,3 +85,6 @@ func true_raise():
 # Parenting
 func get_blocks():
 	return $"../..";
+
+func get_board():
+	return self.get_blocks().get_board();

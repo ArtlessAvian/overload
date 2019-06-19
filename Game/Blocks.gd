@@ -1,5 +1,5 @@
 extends TileMap
-# Always belongs to a board, as a direct child.
+# Always belongs to a Board, as its direct child.
 
 # Model
 const FALLER_SCENE = preload("res://Game/Faller.tscn");
@@ -16,7 +16,7 @@ var line_count = 0;
 
 var queue_swap = null;
 var grace = 0;
-#var pause = 0;
+var pause = 0; # from clearing, or stun from receiving garbage.
 
 func _ready():
 	#### handle model
@@ -31,13 +31,8 @@ func _ready():
 	grace = $"..".grace_period;
 	
 	#### handle view
-	# position everything
 	self.position.x = -get_parent().board_width/2;
-#	self.position.y = get_parent().board_height/2;
 	self.position *= self.cell_size; 
-#	$Cursor.position = self.cursor_pos;
-#	$Cursor.position *= self.cell_size;
-#	$Cursor.position.y *= -1;
 
 func _process(_delta):
 	# handle view.
@@ -65,15 +60,10 @@ func _physics_process(delta):
 		self.check();
 		self.queue_check = false;
 	
-#	for x in range(len(clearing)):
-#		for y in range(len(clearing[x])-1, -1, -1):
-#			if (clearing[x][y] in finish_clearing):
-#				self.make_faller_column(x, y+1);
-#				self.board[x].remove(y);
-#	finish_clearing.clear();
-	
 	if ($"Exploders".get_child_count() == 0):
-		if self.has_space():
+		if self.pause > 0:
+			self.pause -= delta;
+		elif self.has_space():
 			if (self.fractional_raise < 1):
 				self.fractional_raise += delta * \
 					($"..".force_raise_speed if self.force_raise else $"..".rising_speed);
@@ -85,7 +75,7 @@ func _physics_process(delta):
 			self.force_raise = false;
 			grace -= delta;
 			if (grace <= 0):
-				$"..".emit_signal("lost");
+				$"..".emit_signal("lost", self);
 				print("i lost")
 				self.set_physics_process(false);
 
@@ -100,15 +90,10 @@ func prepend_line(first = false):
 		new_row[i] = randi() % get_parent().color_count;
 
 func true_raise():
-#	for col in clearing:
-#		col.pop_back();
-#		col.push_front(-1);
 	self.prepend_line();
-	
 	self.force_raise = false;
 	self.fractional_raise -= 1;
-	
-	# Would do self, but then that recurs.
+
 	for child in get_children():
 		child.propagate_call("true_raise");
 	
@@ -131,6 +116,7 @@ func has_space():
 func check():
 	var any_clears = false;
 	var to_clear = []; # Consider changing to a set
+	
 	for x in range(len(board)):
 		to_clear.append([]);
 		var the_spread = spread(in_a_row(board[x]))
@@ -140,7 +126,6 @@ func check():
 				any_clears = true;
 
 	# Assumes there isn't anything to check above the board.
-
 	for y in range(get_parent().board_height): 
 		# Build the row
 		var row = [];
@@ -168,18 +153,13 @@ func check():
 func do_clears(to_clear):
 	self.force_raise = false; # cut short any raising
 	
-#		self.next_clear_id += 1;
 	var exploder = EXPLODER_SCENE.instance();
-#		exploder.exploder_id = self.next_clear_id;
 	for x in range(len(board)):
 		for y in range(len(board[x])-1, -1, -1):
 			if (to_clear[x][y]):
-#					self.clearing[x][y] = self.next_clear_id;
 				exploder.set_cell(x, -y-1, self.board[x][y]);
 				self.board[x][y] = $"..".CLEARING;
 				exploder.chain = max(exploder.chain, self.chain_checker[x][y]);
-#				self.make_faller_column(x, y+1);
-#				self.board[x].pop_back();
 				
 				# Clear neighboring garbage
 				for x_off in range(-1, 2):
@@ -191,9 +171,7 @@ func do_clears(to_clear):
 									self.board[x+x_off][y+y_off] = $"..".CLEARING;
 						
 	exploder.initialize()
-	$"..".emit_signal("combo", len(exploder.to_explode));
-	$"..".emit_signal("chain", exploder.chain);
-#		print(exploder.position);
+	$"..".emit_signal("clear", self, exploder.chain, len(exploder.to_explode));
 	$Exploders.add_child(exploder);
 
 func make_faller_column(x, y, chain = 1):
@@ -206,11 +184,9 @@ func make_faller_column(x, y, chain = 1):
 			break;
 		column.append(board[x][i]);
 	
-#	print(x, column)
 	for j in range(len(column)):
 		if (overhang):
 			board[x][y+j] = -1;
-#			print("helloooo");
 		else:
 			board[x].pop_back();
 			chain_checker[x].pop_back();
@@ -249,9 +225,6 @@ func receive_garbage(points):
 		$"Fallers".move_child(faller, 0);
 		faller._physics_process(0);
 
-### Cursor Movement
-
-
 func swap(x, y):
 	# Prevent swapping with clearing blocks
 	if y < len(self.board[x]):
@@ -273,17 +246,9 @@ func swap(x, y):
 	if left_faller == null:
 		if right_faller == null:
 			return;
-		left_faller = FALLER_SCENE.instance();
-		left_faller.faller_x = x;
-		left_faller.faller_y = y;
-		$"Fallers".add_child(left_faller);
-		$"Fallers".move_child(left_faller, 0);
-	if right_faller == null:
-		right_faller = FALLER_SCENE.instance();
-		right_faller.faller_x = x + 1;
-		right_faller.faller_y = y;
-		$"Fallers".add_child(right_faller);
-		$"Fallers".move_child(right_faller, 0);
+		left_faller = new_empty_faller(x, y);
+	elif right_faller == null:
+		right_faller = new_empty_faller(x+1, y)
 	
 	# Swap the bottom blocks of the two fallers
 	if len(left_faller.blocks) > 0:
@@ -328,6 +293,14 @@ func spread(array):
 			for _j in range(array[i]):
 				out.append(array[i]);
 	return out;
+
+func new_empty_faller(x, y):
+	var faller = FALLER_SCENE.instance();
+	faller.faller_x = x;
+	faller.faller_y = y;
+	$"Fallers".add_child(faller);
+	$"Fallers".move_child(faller, 0);
+	return faller;
 
 # Parenting
 func get_board():

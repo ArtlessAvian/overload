@@ -25,6 +25,7 @@ RandomPusher="*res://Misc/RandomPusher.gd"
 
 [debug]
 
+settings/stdout/verbose_stdout=true
 gdscript/warnings/treat_warnings_as_errors=true
 
 [display]

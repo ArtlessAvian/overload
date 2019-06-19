@@ -1,15 +1,27 @@
 extends Node2D
-#warning-ignore-all:unused_signal
-signal lost;
-signal chain;
-signal combo;
+# Keeps abstraction between the gamemodes and the blocks
+# Ideally gamemodes don't need to know anything beyond the signals and options
+# and the blocks dont need to know anything beyond the inputs. 
 
+# One to one correspondence with Blocks, as its parent.
+
+#warning-ignore-all:unused_signal
+#warning-ignore-all:unused_class_variable
+
+### Signals
+signal lost;
+signal clear;
+
+### Inputs?
+var garbage_inbox = 0;
+
+### Game Constants
 const EMPTY = -1;
 const CLEARING = 5;
 const GARBAGE = 6;
 const force_raise_speed = 5;
 
-#warning-ignore-all:unused_class_variable
+### Options
 export (String) var player = "kb";
 
 export (int) var board_width = 6;
