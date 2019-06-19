@@ -171,7 +171,7 @@ func do_clears(to_clear):
 									self.board[x+x_off][y+y_off] = $"..".CLEARING;
 						
 	exploder.initialize()
-	$"..".emit_signal("clear", self, exploder.chain, len(exploder.to_explode));
+	$"..".emit_signal("clear", self, exploder.chain, len(exploder.model_explode));
 	$Exploders.add_child(exploder);
 
 func make_faller_column(x, y, chain = 1):

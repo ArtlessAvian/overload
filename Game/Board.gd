@@ -30,7 +30,7 @@ export (int) var color_count = 5;
 
 export (int) var grace_period = 1;
 
-export (float) var explode_pause = 0.7;
+export (float) var explode_pause = 1.4;
 export (float) var explode_interval = 0.1;
 
 export (float) var rising_speed = 0.2;
