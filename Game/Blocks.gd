@@ -15,7 +15,6 @@ var fractional_raise = 0;
 var line_count = 0;
 
 var queue_swap = null;
-var grace = 0;
 var pause = 0; # from clearing, or stun from receiving garbage.
 
 func _ready():
@@ -27,8 +26,6 @@ func _ready():
 	
 	for row in range(get_parent().board_height/2):
 		prepend_line(row == 0)
-		
-	grace = $"..".grace_period;
 	
 	#### handle view
 	self.position.x = -get_parent().board_width/2;
@@ -70,14 +67,14 @@ func _physics_process(delta):
 			else:
 				self.force_raise = false;
 				self.true_raise()
-			grace = $"..".grace_period;
+#			grace = $"..".grace_period;
 		else:
 			self.force_raise = false;
-			grace -= delta;
-			if (grace <= 0):
-				$"..".emit_signal("lost", self);
-				print("i lost")
-				self.set_physics_process(false);
+#			grace -= delta;
+#			if (grace <= 0):
+#				$"..".emit_signal("lost", self);
+#				print("i lost")
+#				self.set_physics_process(false);
 
 func prepend_line(first = false):
 	for i in range(len(board)):

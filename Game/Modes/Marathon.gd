@@ -11,15 +11,13 @@ var points = 0;
 func _ready():
 #	$"Board/Blocks".set_process(false);
 #	$"Board/Blocks"._process(0);
-	$"Board/Blocks".set_physics_process(false);
-	$"AnimationPlayer".play("Start");
+	$"Board".pre_round_start();
 
 func start_boards():
-	$"Board/Blocks".set_process(true);
-	$"Board/Blocks".set_physics_process(true);
+	$"Board".round_start();
 
 func _process(_delta):
-	$Grace.text = str($"Board/Blocks".grace);
+	$Grace.text = str($"Board".grace);
 
 func _on_Board_clear(_board, chain, combo):
 	while len(chains) <= chain-1:
@@ -35,4 +33,8 @@ func _on_Board_clear(_board, chain, combo):
 	$Points.text = str(points);
 
 func _on_Board_lost(_board):
-	$"AnimationPlayer".play("Lose");
+	$"Lose".text = "YOU LOSE, NERRRRD"
+
+
+func _on_Board_round_ready():
+	start_boards();

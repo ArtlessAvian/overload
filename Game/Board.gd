@@ -9,6 +9,7 @@ extends Node2D
 #warning-ignore-all:unused_class_variable
 
 ### Signals
+signal round_ready;
 signal lost;
 signal clear;
 
@@ -35,3 +36,33 @@ export (float) var explode_interval = 0.1;
 
 export (float) var rising_speed = 0.2;
 export (float) var faller_speed = 10;
+
+func pre_round_start():
+	$"Blocks".set_physics_process(false);
+	$"AnimationPlayer".play("Start");
+
+func round_start():
+	$"Blocks".set_physics_process(true);
+
+func pause():
+	$"Blocks".set_physics_process(false);
+
+func unpause():
+	$"Blocks".set_physics_process(true);
+
+func lose():
+	$"Blocks".set_physics_process(false);
+	$"AnimationPlayer".play("Lose");
+
+# Game Logic
+onready var grace = self.grace_period;
+
+func _physics_process(delta):
+	if $"Blocks".pause == 0 and $"Blocks/Exploders".get_child_count() == 0:
+		if not $"Blocks".has_space():
+			self.grace -= delta;
+			if (self.grace <= 0):
+				self.emit_signal("lost", self);
+				self.lose();
+		else:
+			grace = self.grace_period;

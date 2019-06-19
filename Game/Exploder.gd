@@ -90,7 +90,6 @@ func _physics_process(delta):
 			self.get_blocks().board[block.x][y] = get_cellv(block);
 			self.get_blocks().chain_checker[block.x][y] = chain+1;
 		
-		print("im gay");
 		self.queue_free();
 
 func true_raise():
