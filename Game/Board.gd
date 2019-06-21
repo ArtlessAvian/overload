@@ -59,7 +59,7 @@ func lose():
 onready var grace = self.grace_period;
 
 func _physics_process(delta):
-	if $"Blocks".pause == 0 and $"Blocks/Exploders".get_child_count() == 0:
+	if $"Blocks".pause <= 0 and $"Blocks/Exploders".get_child_count() == 0:
 		if not $"Blocks".has_space():
 			self.grace -= delta;
 			if (self.grace <= 0):

@@ -59,7 +59,7 @@ func _physics_process(delta):
 	
 	# This could be cleaned up.
 	if $"Exploders".get_child_count() == 0 and $Fallers.get_child_count() == 0:
-		if self.pause > 0:
+		if self.pause > 0 and not self.force_raise:
 			self.pause -= delta;
 		else:
 			if (not self.force_raise) and self.get_board().garbage_inbox > 0:
@@ -173,6 +173,9 @@ func do_clears(to_clear):
 	exploder.initialize()
 	$"..".emit_signal("clear", self.get_board(), exploder.chain, len(exploder.model_explode));
 	$Exploders.add_child(exploder);
+	
+	# TODO: Better formula
+	self.pause = 1;
 
 func make_faller_column(x, y, chain = 1):
 	var column = [];
