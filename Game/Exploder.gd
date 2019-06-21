@@ -14,8 +14,6 @@ var animation_time = 0;
 var explode_time = 0;
 var effects = [];
 
-# TOOD: Split model and view!
-
 func initialize():
 	# Model
 	model_explode = self.get_used_cells();

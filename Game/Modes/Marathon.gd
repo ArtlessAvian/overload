@@ -35,6 +35,5 @@ func _on_Board_clear(_board, chain, combo):
 func _on_Board_lost(_board):
 	$"Lose".text = "YOU LOSE, NERRRRD"
 
-
 func _on_Board_round_ready():
 	start_boards();

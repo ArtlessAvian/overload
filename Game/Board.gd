@@ -31,7 +31,7 @@ export (int) var color_count = 5;
 
 export (int) var grace_period = 1;
 
-export (float) var explode_pause = 1.4;
+export (float) var explode_pause = 1.0;
 export (float) var explode_interval = 0.1;
 
 export (float) var rising_speed = 0.2;
@@ -52,6 +52,7 @@ func unpause():
 
 func lose():
 	$"Blocks".set_physics_process(false);
+	self.set_physics_process(false);
 	$"AnimationPlayer".play("Lose");
 
 # Game Logic

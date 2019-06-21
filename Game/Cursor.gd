@@ -53,8 +53,9 @@ func cursor_right():
 		cursor_pos.x += 1;
 
 func cursor_swap():
-	self.get_blocks().queue_swap = cursor_pos;
-	
+	if (self.get_blocks().is_physics_processing()):
+		self.get_blocks().queue_swap = cursor_pos;
+
 # Parenting
 func get_blocks():
 	return self.get_parent();

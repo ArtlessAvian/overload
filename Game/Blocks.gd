@@ -57,24 +57,27 @@ func _physics_process(delta):
 		self.check();
 		self.queue_check = false;
 	
-	if ($"Exploders".get_child_count() == 0):
+	# This could be cleaned up.
+	if $"Exploders".get_child_count() == 0 and $Fallers.get_child_count() == 0:
 		if self.pause > 0:
 			self.pause -= delta;
-		elif self.has_space():
-			if (self.fractional_raise < 1):
-				self.fractional_raise += delta * \
-					($"..".force_raise_speed if self.force_raise else $"..".rising_speed);
+		else:
+			if (not self.force_raise) and self.get_board().garbage_inbox > 0:
+				self.receive_garbage(self.get_board().garbage_inbox);
+				self.get_board().garbage_inbox = 0;
+			
+			if self.has_space():
+				if (self.fractional_raise < 1):
+					self.fractional_raise += delta * \
+						($"..".force_raise_speed if self.force_raise else $"..".rising_speed);
+				else:
+					self.force_raise = false;
+					self.true_raise()
 			else:
 				self.force_raise = false;
-				self.true_raise()
-#			grace = $"..".grace_period;
-		else:
-			self.force_raise = false;
-#			grace -= delta;
-#			if (grace <= 0):
-#				$"..".emit_signal("lost", self);
-#				print("i lost")
-#				self.set_physics_process(false);
+	else:
+		self.force_raise = false;
+
 
 func prepend_line(first = false):
 	for i in range(len(board)):
@@ -148,7 +151,7 @@ func check():
 			self.chain_checker[x][y] = 1;
 
 func do_clears(to_clear):
-	self.force_raise = false; # cut short any raising
+#	self.force_raise = false; # cut short any raising
 	
 	var exploder = EXPLODER_SCENE.instance();
 	for x in range(len(board)):
@@ -168,7 +171,7 @@ func do_clears(to_clear):
 									self.board[x+x_off][y+y_off] = $"..".CLEARING;
 						
 	exploder.initialize()
-	$"..".emit_signal("clear", self, exploder.chain, len(exploder.model_explode));
+	$"..".emit_signal("clear", self.get_board(), exploder.chain, len(exploder.model_explode));
 	$Exploders.add_child(exploder);
 
 func make_faller_column(x, y, chain = 1):
