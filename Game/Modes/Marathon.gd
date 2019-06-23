@@ -23,6 +23,8 @@ func _on_Board_clear(_board, chain, combo):
 	while len(chains) <= chain-1:
 		chains.append(0);
 	chains[chain - 1] += 1;
+	if chain >= 2:
+		chains[chain - 2] -= 1;
 	points += pow(2, chain-1) * 500;
 	
 	while len(combos) <= combo-3:

@@ -275,6 +275,16 @@ func swap(x, y):
 	left_faller._physics_process(0);
 	right_faller._physics_process(0);
 
+func tallest_column():
+	var tallest = 0;
+	for col in range(len(board)):
+		if len(board[col]) > len(board[tallest]):
+			tallest = col;
+	return tallest;
+
+func tallest_column_height():
+	return len(board[self.tallest_column()]);
+
 ### Helpers
 func in_a_row(array):
 	var out = [];
