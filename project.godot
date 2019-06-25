@@ -8,9 +8,38 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "TileMap",
+"class": "Blocks",
+"language": "GDScript",
+"path": "res://Game/Blocks.gd"
+}, {
+"base": "Node2D",
+"class": "Board",
+"language": "GDScript",
+"path": "res://Game/Board.gd"
+}, {
+"base": "Resource",
+"class": "BoardOptions",
+"language": "GDScript",
+"path": "res://Game/BoardOptions.gd"
+}, {
+"base": "TileMap",
+"class": "Exploder",
+"language": "GDScript",
+"path": "res://Game/Exploder.gd"
+}, {
+"base": "TileMap",
+"class": "Faller",
+"language": "GDScript",
+"path": "res://Game/Faller.gd"
+} ]
 _global_script_class_icons={
-
+"Blocks": "",
+"Board": "",
+"BoardOptions": "",
+"Exploder": "",
+"Faller": ""
 }
 
 [application]
@@ -25,7 +54,6 @@ RandomPusher="*res://Misc/RandomPusher.gd"
 
 [debug]
 
-settings/stdout/verbose_stdout=true
 gdscript/warnings/treat_warnings_as_errors=true
 
 [display]

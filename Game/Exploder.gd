@@ -1,5 +1,11 @@
 extends TileMap
+signal finished_exploding; # Args are an array of Vector2 (Ints), then a y offset.
+class_name Exploder
+
 # Always a child of a child of Blocks
+var board_options : BoardOptions = preload("res://Options/Default.tres");
+func set_board_options(thing : BoardOptions):
+	self.board_options = thing;
 
 # Kinda RAII?
 
@@ -17,6 +23,8 @@ var effects = [];
 func initialize():
 	# Model
 	model_explode = self.get_used_cells();
+	for vec in model_explode:
+		vec.y = -vec.y-1;
 	
 	# View
 	visual_explode = self.get_used_cells();
@@ -49,23 +57,23 @@ func _process(delta):
 	$"HBoxContainer".modulate.a *= 0.95;
 	
 	if self.initial_wait:
-		if animation_time >= 0.5 * self.get_board().explode_pause:
+		if animation_time >= 0.5 * self.board_options.explode_pause:
 			initial_wait = false;
 		return;
 	
 	explode_time += delta;
 	
-	while self.explode_time >= self.get_board().explode_interval and not self.visual_explode.empty():
+	while self.explode_time >= self.board_options.explode_interval and not self.visual_explode.empty():
 		# TODO: Move to process
 		# Physics Process should only handle the model.
-		self.explode_time -= self.get_board().explode_interval;
+		self.explode_time -= self.board_options.explode_interval;
 		var thing = self.visual_explode.pop_back();
 		var color = get_cellv(thing);
 		
-		if (color != $"../../..".GARBAGE):
-			self.set_cellv(thing, self.get_board().EMPTY);
+		if (color != self.board_options.GARBAGE):
+			self.set_cellv(thing, self.board_options.EMPTY);
 		else:
-			self.set_cellv(thing, randi() % self.get_board().color_count);
+			self.set_cellv(thing, randi() % self.board_options.color_count);
 		
 		var effect = self.effects.pop_back();
 		effect.modulate.r = cos((color/5.0) * 2 * PI)/2 + 0.5;
@@ -79,23 +87,18 @@ func _process(delta):
 func _physics_process(delta):
 	physics_time += delta;
 	
-	if physics_time >= (self.get_board().explode_pause + self.get_board().explode_interval * len(model_explode)):
-		for block in model_explode:
-			var y = -block.y-1 + y_offset;
-			assert(self.get_blocks().board[block.x][y] == $"../../..".CLEARING);
-			self.get_blocks().make_faller_column(block.x, y+1, chain + 1);
-			
-			self.get_blocks().board[block.x][y] = get_cellv(block);
-			self.get_blocks().chain_checker[block.x][y] = chain+1;
+	if physics_time >= (self.board_options.explode_pause + self.board_options.explode_interval * len(model_explode)):
+		self.emit_signal("finished_exploding", self.model_explode, self.y_offset);
+		# TODO: Move to inside blocks.
+#		for block in model_explode:
+#			var y = -block.y-1 + y_offset;
+#			assert(self.get_blocks().board[block.x][y] == self.board_options.CLEARING);
+#			self.get_blocks().make_faller_column(block.x, y+1, chain + 1);
+#
+#			self.get_blocks().board[block.x][y] = get_cellv(block);
+#			self.get_blocks().chain_checker[block.x][y] = chain+1;
 		
 		self.queue_free();
 
 func true_raise():
 	y_offset += 1;
-
-# Parenting
-func get_blocks():
-	return $"../..";
-
-func get_board():
-	return self.get_blocks().get_board();

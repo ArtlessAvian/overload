@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Game/BoardOptions.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+player = "kb"
+board_width = 6
+board_height = 12
+color_count = 5
+cell_size = Vector2( 40, 40 )
+grace_period = 1
+explode_pause = 1.0
+explode_interval = 0.1
+rising_speed = 0.2
+faller_speed = 10.0
