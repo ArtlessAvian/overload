@@ -17,7 +17,7 @@ signal clear;
 var garbage_inbox = 0;
 
 ### Game Constants
-const EMPTY = -1;
+const EMPTY = 7;
 const CLEARING = 5;
 const GARBAGE = 6;
 const force_raise_speed = 5;
@@ -59,8 +59,8 @@ func lose():
 onready var grace = self.grace_period;
 
 func _physics_process(delta):
-	if $"Blocks".pause <= 0 and $"Blocks/Exploders".get_child_count() == 0:
-		if not $"Blocks".has_space():
+	if $"Blocks/Exploders".get_child_count() == 0:
+		if $"Blocks".pause <= 0 and not $"Blocks".has_space():
 			self.grace -= delta;
 			if (self.grace <= 0):
 				self.emit_signal("lost", self);

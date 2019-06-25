@@ -63,7 +63,7 @@ func _process(delta):
 		var color = get_cellv(thing);
 		
 		if (color != $"../../..".GARBAGE):
-			self.set_cellv(thing, -1);
+			self.set_cellv(thing, self.get_board().EMPTY);
 		else:
 			self.set_cellv(thing, randi() % self.get_board().color_count);
 		

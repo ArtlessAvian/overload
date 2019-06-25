@@ -182,14 +182,14 @@ func make_faller_column(x, y, chain = 1):
 	
 	var overhang = false;
 	for i in range(y, len(board[x])):
-		if board[x][i] in [5, -1]:
+		if board[x][i] in [5, -1, 7]:
 			overhang = true;
 			break;
 		column.append(board[x][i]);
 	
 	for j in range(len(column)):
 		if (overhang):
-			board[x][y+j] = -1;
+			board[x][y+j] = self.get_board().EMPTY;
 		else:
 			board[x].pop_back();
 			chain_checker[x].pop_back();
