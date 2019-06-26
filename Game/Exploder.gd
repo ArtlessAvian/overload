@@ -23,9 +23,9 @@ var effects = [];
 func initialize():
 	# Model
 	model_explode = self.get_used_cells();
-	for vec in model_explode:
-		vec.y = -vec.y-1;
-	
+	for i in range(len(model_explode)):
+		model_explode[i].y = -model_explode[i].y-1;
+		
 	# View
 	visual_explode = self.get_used_cells();
 	visual_explode.invert();
@@ -88,7 +88,7 @@ func _physics_process(delta):
 	physics_time += delta;
 	
 	if physics_time >= (self.board_options.explode_pause + self.board_options.explode_interval * len(model_explode)):
-		self.emit_signal("finished_exploding", self.model_explode, self.y_offset);
+		self.emit_signal("finished_exploding", self.model_explode, self.y_offset, self.chain);
 		# TODO: Move to inside blocks.
 #		for block in model_explode:
 #			var y = -block.y-1 + y_offset;

@@ -116,7 +116,7 @@ region_rect = Rect2( 0, 0, 240, 480 )
 
 [node name="Blocks" type="TileMap" parent="."]
 light_mask = 1024
-position = Vector2( -120, 250 )
+position = Vector2( -120, 240 )
 tile_set = ExtResource( 6 )
 cell_size = Vector2( 40, 40 )
 format = 1
@@ -132,7 +132,7 @@ margin_bottom = 40.0
 color = Color( 0, 0, 0, 0.501961 )
 
 [node name="Cursor" type="Sprite" parent="Blocks"]
-position = Vector2( 40, -30 )
+position = Vector2( 40, -20 )
 z_index = 3
 texture = ExtResource( 8 )
 region_rect = Rect2( 0, 0, 40, 20 )
@@ -159,3 +159,5 @@ autoplay = "1Reset"
 anims/1Reset = SubResource( 2 )
 anims/Lose = SubResource( 3 )
 anims/Start = SubResource( 4 )
+[connection signal="raise" from="Blocks/Cursor" to="Blocks" method="_on_Cursor_raise"]
+[connection signal="swap" from="Blocks/Cursor" to="Blocks" method="_on_Cursor_swap"]

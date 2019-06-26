@@ -27,7 +27,10 @@ func construct(x : int, column : Array, column_chainer : Array, y : int, blocks 
 	self.chain = chain;
 	
 	assert(len(self.get_used_cells()) == 0);
-	
+	self.redraw();
+
+func redraw():
+	self.clear();
 	for j in len(blocks):
 		assert(blocks[j] != 5);
 		self.set_cell(0, -j-1, blocks[j]);

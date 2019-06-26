@@ -55,6 +55,7 @@ RandomPusher="*res://Misc/RandomPusher.gd"
 [debug]
 
 gdscript/warnings/treat_warnings_as_errors=true
+gdscript/warnings/return_value_discarded=false
 
 [display]
 
