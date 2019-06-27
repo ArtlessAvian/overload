@@ -186,7 +186,8 @@ func do_clears(to_clear):
 
 func make_faller_column(x, y, chain):
 	var blocks = pop_column_slice(x, y);
-	self.add_new_faller(x, y, blocks, chain);
+	if (blocks != []):
+		self.add_new_faller(x, y, blocks, chain);
 
 func pop_column_slice(x, y):
 	var column = [];
@@ -250,25 +251,27 @@ func swap(x, y):
 	var left_blocks = self.pop_column_slice(x, y);
 	var right_blocks = self.pop_column_slice(x + 1, y);
 	
-	var left_empty = len(left_blocks) == 0;
-	var right_empty = len(right_blocks) == 0;
+	var left_was_empty = left_blocks.empty();
+	var right_was_empty = right_blocks.empty();
 
 	# Swap the bottom blocks of the two fallers
-	if left_empty:
-		if right_empty:
+	if left_was_empty:
+		if right_was_empty:
 			return;
 		else:
 			left_blocks.append(right_blocks.pop_front());
 	else:
-		if right_empty:
+		if right_was_empty:
 			right_blocks.append(left_blocks.pop_front());
 		else:
 			var temp = left_blocks[0];
 			left_blocks[0] = right_blocks[0];
 			right_blocks[0] = temp;
 	
-	self.add_new_faller(x, y + int(right_empty), left_blocks, 1);
-	self.add_new_faller(x+1, y + int(left_empty), right_blocks, 1);
+	if (not left_blocks.empty()):
+		self.add_new_faller(x, y + int(right_was_empty), left_blocks, 1);
+	if (not right_blocks.empty()):
+		self.add_new_faller(x+1, y + int(left_was_empty), right_blocks, 1);
 
 func tallest_column():
 	var tallest = 0;

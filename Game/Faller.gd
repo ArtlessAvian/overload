@@ -26,6 +26,7 @@ func construct(x : int, column : Array, column_chainer : Array, y : int, blocks 
 	self.blocks = blocks;
 	self.chain = chain;
 	
+	assert(not blocks.empty());
 	assert(len(self.get_used_cells()) == 0);
 
 func _ready():
