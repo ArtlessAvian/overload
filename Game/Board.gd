@@ -55,3 +55,6 @@ func _physics_process(delta):
 				self.lose();
 		else:
 			grace = self.board_options.grace_period;
+
+func _on_Blocks_clear(chain, combo):
+	self.emit_signal("clear", self, chain, combo);

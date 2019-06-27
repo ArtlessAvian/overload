@@ -178,7 +178,7 @@ func do_clears(to_clear):
 						
 	exploder.initialize();
 	exploder.connect("finished_exploding", self, "_on_Exploder_finished_exploding");
-	self.emit_signal("clear", self.get_parent(), exploder.chain, len(exploder.model_explode));
+	self.emit_signal("clear", exploder.chain, len(exploder.model_explode));
 	$Exploders.add_child(exploder);
 	
 	# TODO: Better formula
@@ -336,7 +336,6 @@ func _on_Faller_finished_falling():
 	self.queue_check = true;
 
 func _on_Exploder_finished_exploding(block_locs, y_offset, chain):
-	print("henlo")
 	for loc in block_locs:
 		var y = loc.y + y_offset;
 		self.board[loc.x][y] = self.board_options.EMPTY;

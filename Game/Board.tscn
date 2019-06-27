@@ -159,5 +159,6 @@ autoplay = "1Reset"
 anims/1Reset = SubResource( 2 )
 anims/Lose = SubResource( 3 )
 anims/Start = SubResource( 4 )
+[connection signal="clear" from="Blocks" to="." method="_on_Blocks_clear"]
 [connection signal="raise" from="Blocks/Cursor" to="Blocks" method="_on_Cursor_raise"]
 [connection signal="swap" from="Blocks/Cursor" to="Blocks" method="_on_Cursor_swap"]

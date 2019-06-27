@@ -6,30 +6,23 @@
 
 [node name="Board" parent="." instance=ExtResource( 1 )]
 position = Vector2( 120, 240 )
-player = "rand"
 
 [node name="Board2" parent="." instance=ExtResource( 1 )]
 position = Vector2( 360, 240 )
-player = "rand"
 
 [node name="Board3" parent="." instance=ExtResource( 1 )]
 position = Vector2( 600, 240 )
-player = "rand"
 
 [node name="Board4" parent="." instance=ExtResource( 1 )]
 position = Vector2( 840, 240 )
-player = "rand"
 
 [node name="Board5" parent="." instance=ExtResource( 1 )]
 position = Vector2( 1080, 240 )
-player = "rand"
 
 [node name="Board6" parent="." instance=ExtResource( 1 )]
 position = Vector2( 280, 640 )
 rotation = 1.5708
-player = "rand"
 
 [node name="Board7" parent="." instance=ExtResource( 1 )]
 position = Vector2( 900, 640 )
 rotation = 1.5708
-player = "rand"
