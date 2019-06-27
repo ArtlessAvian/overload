@@ -174,7 +174,7 @@ func do_clears(to_clear):
 							if 0 <= y + y_off and y + y_off < len(board[x+x_off]):
 								if (self.board[x+x_off][y+y_off] == self.board_options.GARBAGE):
 									exploder.set_cell(x+x_off, -y-y_off-1, self.board[x+x_off][y+y_off]);
-									self.board[x+x_off][y+y_off] = $"..".CLEARING;
+									self.board[x+x_off][y+y_off] = self.board_options.CLEARING;
 						
 	exploder.initialize();
 	exploder.connect("finished_exploding", self, "_on_Exploder_finished_exploding");
@@ -184,7 +184,11 @@ func do_clears(to_clear):
 	# TODO: Better formula
 	self.pause = 1;
 
-func make_faller_column(x, y, chain = 1):
+func make_faller_column(x, y, chain):
+	var blocks = pop_column_slice(x, y);
+	self.add_new_faller(x, y, blocks, chain);
+
+func pop_column_slice(x, y):
 	var column = [];
 	
 	var overhang = false;
@@ -201,16 +205,15 @@ func make_faller_column(x, y, chain = 1):
 			board[x].pop_back();
 			chain_checker[x].pop_back();
 	
-	if len(column) == 0:
-		return;
-	
-	var faller = FALLER_SCENE.instance();
-	faller.construct(x, board[x], chain_checker[x], y, column, chain);
-	faller.connect("finished_falling", self, "_on_Faller_finished_falling");
-	faller.set_board_options(self.board_options);
-	$"Fallers".add_child(faller);
-	$"Fallers".move_child(faller, 0);
-	return faller;
+	return column;
+#
+#	var faller = FALLER_SCENE.instance();
+#	faller.construct(x, board[x], chain_checker[x], y, column, chain);
+#	faller.connect("finished_falling", self, "_on_Faller_finished_falling");
+#	faller.set_board_options(self.board_options);
+#	$"Fallers".add_child(faller);
+#	$"Fallers".move_child(faller, 0);
+#	return faller;
 
 func receive_garbage(points):
 	var tallest = board_options.board_height;
@@ -227,13 +230,7 @@ func receive_garbage(points):
 		
 		var column_index = shuffle.pop_back();
 		
-		var faller : Faller = FALLER_SCENE.instance();
-		faller.construct(column_index, board[column_index], chain_checker[column_index], tallest, blocks, 1);
-		faller.connect("finished_falling", self, "_on_Faller_finished_falling");
-		faller.set_board_options(self.board_options);
-		$"Fallers".add_child(faller);
-		$"Fallers".move_child(faller, 0);
-		faller._physics_process(0);
+		self.add_new_faller(column_index, tallest, blocks, 1);
 
 func swap(x, y):
 	# Prevent swapping with clearing blocks
@@ -243,46 +240,35 @@ func swap(x, y):
 	if y < len(self.board[x+1]):
 		if self.board[x+1][y] == 5:
 			return;
-	
+
 	# Prevent swapping into a faller
 	for faller in $"Fallers".get_children():
 		if faller.intersects(x, y) or faller.intersects(x+1, y):
 			return;
-	
+
 	# TODO: Rewrite to create fallers at the end >:(
-	var left_faller = self.make_faller_column(x + 1, y);
-	var right_faller = self.make_faller_column(x, y);
+	var left_blocks = self.pop_column_slice(x, y);
+	var right_blocks = self.pop_column_slice(x + 1, y);
 	
-	# Create empty fallers if null
-	if left_faller == null:
-		if right_faller == null:
-			return;
-		left_faller = new_empty_faller(x+1, y);
-	elif right_faller == null:
-		right_faller = new_empty_faller(x, y)
-	
+	var left_empty = len(left_blocks) == 0;
+	var right_empty = len(right_blocks) == 0;
+
 	# Swap the bottom blocks of the two fallers
-	if len(left_faller.blocks) > 0:
-		if len(right_faller.blocks) > 0:
-			var temp = left_faller.blocks[0];
-			left_faller.blocks[0] = right_faller.blocks[0];
-			right_faller.blocks[0] = temp;
+	if left_empty:
+		if right_empty:
+			return;
 		else:
-			right_faller.blocks.append(left_faller.blocks.pop_front());
-			left_faller.y_offset += 1;
+			left_blocks.append(right_blocks.pop_front());
 	else:
-		if len(right_faller.blocks) > 0:
-			left_faller.blocks.append(right_faller.blocks.pop_front());
-			right_faller.y_offset += 1;
+		if right_empty:
+			right_blocks.append(left_blocks.pop_front());
 		else:
-			pass
+			var temp = left_blocks[0];
+			left_blocks[0] = right_blocks[0];
+			right_blocks[0] = temp;
 	
-#	left_faller.x -= 1;
-#	right_faller.x += 1;
-	left_faller.redraw();
-	right_faller.redraw();
-	left_faller._physics_process(0);
-	right_faller._physics_process(0);
+	self.add_new_faller(x, y + int(right_empty), left_blocks, 1);
+	self.add_new_faller(x+1, y + int(left_empty), right_blocks, 1);
 
 func tallest_column():
 	var tallest = 0;
@@ -293,6 +279,40 @@ func tallest_column():
 
 func tallest_column_height():
 	return len(board[self.tallest_column()]);
+
+### Adding Children With Signals
+func add_new_faller(x, y, blocks, chain):
+	var faller : Faller = FALLER_SCENE.instance();
+	faller.construct(x, self.board[x], self.chain_checker[x], y, blocks, chain);
+	self.add_faller(faller);
+
+func add_faller(faller):
+	faller.connect("finished_falling", self, "_on_Faller_finished_falling");
+	$Fallers.add_child(faller);
+#	$"Fallers".move_child(faller, 0);
+
+### Children's Signals
+func _on_Cursor_raise():
+	if self.is_physics_processing():
+		self.force_raise = true;
+
+func _on_Cursor_swap(vec):
+	if self.is_physics_processing():
+		self.queue_swap = vec;
+
+func _on_Faller_finished_falling():
+	self.queue_check = true;
+
+func _on_Exploder_finished_exploding(block_locs, y_offset, chain):
+	for loc in block_locs:
+		var y = loc.y + y_offset;
+		self.board[loc.x][y] = self.board_options.EMPTY;
+		self.make_faller_column(loc.x, y + 1, chain + 1);
+	
+	for i in range(len(board)):
+		while not board[i].empty() and board[i].back() == self.board_options.EMPTY:
+			board[i].pop_back();
+			chain_checker[i].pop_back();
 
 ### Helpers
 func in_a_row(array):
@@ -315,34 +335,3 @@ func spread(array):
 			for _j in range(array[i]):
 				out.append(array[i]);
 	return out;
-
-func new_empty_faller(x, y):
-	var faller : Faller = FALLER_SCENE.instance();
-	faller.construct(x, board[x], chain_checker[x], y, [], 1);
-	faller.connect("finished_falling", self, "_on_Faller_finished_falling");
-	$"Fallers".add_child(faller);
-	$"Fallers".move_child(faller, 0);
-	return faller;
-
-func _on_Cursor_raise():
-	if self.is_physics_processing():
-		self.force_raise = true;
-
-func _on_Cursor_swap(vec):
-	if self.is_physics_processing():
-		self.queue_swap = vec;
-
-func _on_Faller_finished_falling():
-	self.queue_check = true;
-
-func _on_Exploder_finished_exploding(block_locs, y_offset, chain):
-	for loc in block_locs:
-		var y = loc.y + y_offset;
-		self.board[loc.x][y] = self.board_options.EMPTY;
-		self.make_faller_column(loc.x, y + 1, chain + 1);
-	
-	for i in range(len(board)):
-		while not board[i].empty() and board[i].back() == self.board_options.EMPTY:
-			board[i].pop_back();
-			chain_checker[i].pop_back();
-	
