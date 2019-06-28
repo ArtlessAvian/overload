@@ -18,7 +18,8 @@ var column_chainer : Array;
 var blocks : Array;
 var chain : int;
 
-func construct(x : int, column : Array, column_chainer : Array, y : int, blocks : Array, chain : int):
+func construct(board_options : BoardOptions, x : int, column : Array, column_chainer : Array, y : float, blocks : Array, chain : int):
+	self.set_board_options(board_options);
 	self.x = x;
 	self.column = column;
 	self.column_chainer = column_chainer;
@@ -29,12 +30,11 @@ func construct(x : int, column : Array, column_chainer : Array, y : int, blocks 
 	assert(not blocks.empty());
 	assert(len(self.get_used_cells()) == 0);
 
-func _ready():
+#func _ready():
 	self.clear();
 	for j in len(blocks):
 		assert(blocks[j] != 5);
 		self.set_cell(0, -j-1, blocks[j]);
-	self._physics_process(0);
 
 func _process(_delta):
 	self.position.x = self.x;

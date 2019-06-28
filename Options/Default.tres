@@ -13,4 +13,4 @@ grace_period = 1
 explode_pause = 1.0
 explode_interval = 0.1
 rising_speed = 0.2
-faller_speed = 2.0
+faller_speed = 10.0

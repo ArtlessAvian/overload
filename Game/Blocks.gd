@@ -1,4 +1,5 @@
 extends TileMap
+# warning-ignore:unused_signal
 signal clear
 class_name Blocks
 
@@ -63,7 +64,7 @@ func _physics_process(delta):
 		self.check();
 		self.queue_check = false;
 	
-	# This could be cleaned up.
+	# TODO:  This could be cleaned up.
 	if $"Exploders".get_child_count() == 0 and $Fallers.get_child_count() == 0:
 		if self.pause > 0 and not self.force_raise:
 			self.pause -= delta;
@@ -90,11 +91,16 @@ func prepend_line(first = false):
 #		var block_index = i + self.line_count * self.board_options.board_width;
 		if (first):
 			new_row[i] = randi() % board_options.color_count;
+		
 		board[i].push_front(new_row[i]);
 		chain_checker[i].push_front(1);
 		self.line_count += 1;
+		
+		# Generate a color that isn't the same as the one above.
+#		var new = randi() % (board_options.color_count - 1);
+#		new_row[i] = new + int(new >= new_row[i]);
 		new_row[i] = randi() % board_options.color_count;
-
+		
 func true_raise():
 	self.prepend_line();
 	self.force_raise = false;
@@ -157,29 +163,30 @@ func check():
 			self.chain_checker[x][y] = 1;
 
 func do_clears(to_clear):
-#	self.force_raise = false; # cut short any raising
+	self.force_raise = false; # cut short any raising
 	
-	var exploder = EXPLODER_SCENE.instance();
+	var to_explode = [];
+	var chain = 1;
+	
 	for x in range(len(board)):
 		for y in range(len(board[x])-1, -1, -1):
 			if (to_clear[x][y]):
-				exploder.set_cell(x, -y-1, self.board[x][y]);
-				self.board[x][y] = self.board_options.CLEARING;
-				exploder.chain = max(exploder.chain, self.chain_checker[x][y]);
-				
-				# Clear neighboring garbage
-				for x_off in range(-1, 2):
-					for y_off in range(-1, 2):
-						if 0 <= x + x_off and x + x_off < len(board):
-							if 0 <= y + y_off and y + y_off < len(board[x+x_off]):
-								if (self.board[x+x_off][y+y_off] == self.board_options.GARBAGE):
-									exploder.set_cell(x+x_off, -y-y_off-1, self.board[x+x_off][y+y_off]);
-									self.board[x+x_off][y+y_off] = self.board_options.CLEARING;
-						
-	exploder.initialize();
-	exploder.connect("finished_exploding", self, "_on_Exploder_finished_exploding");
-	self.emit_signal("clear", exploder.chain, len(exploder.model_explode));
-	$Exploders.add_child(exploder);
+				to_explode.append(Vector2(x, y));
+#				exploder.set_cell(x, -y-1, self.board[x][y]);
+#				self.board[x][y] = self.board_options.CLEARING;
+				chain = max(chain, self.chain_checker[x][y]);
+#
+#				# Clear neighboring garbage
+#				for x_off in range(-1, 2):
+#					for y_off in range(-1, 2):
+#						if 0 <= x + x_off and x + x_off < len(board):
+#							if 0 <= y + y_off and y + y_off < len(board[x+x_off]):
+#								if (self.board[x+x_off][y+y_off] == self.board_options.GARBAGE):
+#									exploder.set_cell(x+x_off, -y-y_off-1, self.board[x+x_off][y+y_off]);
+#									self.board[x+x_off][y+y_off] = self.board_options.CLEARING;
+#
+	self.add_new_exploder(to_explode, chain);
+#	self.emit_signal("clear", exploder.chain, len(exploder.model_explode));
 	
 	# TODO: Better formula
 	self.pause = 1;
@@ -284,15 +291,24 @@ func tallest_column_height():
 	return len(board[self.tallest_column()]);
 
 ### Adding Children With Signals
-func add_new_faller(x, y, blocks, chain):
+func add_new_faller(x : int, y : float, blocks : Array, chain : int):
 	var faller : Faller = FALLER_SCENE.instance();
-	faller.construct(x, self.board[x], self.chain_checker[x], y, blocks, chain);
+	faller.construct(self.board_options, x, self.board[x], self.chain_checker[x], y, blocks, chain);
 	self.add_faller(faller);
 
-func add_faller(faller):
+func add_faller(faller : Faller):
 	faller.connect("finished_falling", self, "_on_Faller_finished_falling");
 	$Fallers.add_child(faller);
 #	$"Fallers".move_child(faller, 0);
+
+func add_new_exploder(to_explode : Array, chain):
+	var exploder : Exploder = EXPLODER_SCENE.instance();
+	exploder.construct(self.board_options, self.board, to_explode, chain);
+	self.add_exploder(exploder);
+
+func add_exploder(exploder : Exploder):
+	exploder.connect("finished_exploding", self, "_on_Exploder_finished_exploding");
+	$Exploders.add_child(exploder);
 
 ### Children's Signals
 func _on_Cursor_raise():

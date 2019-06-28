@@ -1,4 +1,8 @@
 extends TileMap
+
+#warning-ignore-all:unused_signal
+#warning-ignore-all:unused_class_variable
+
 signal finished_exploding; # Args are an array of Vector2 (Ints), then a y offset.
 class_name Exploder
 
@@ -7,98 +11,80 @@ var board_options : BoardOptions = preload("res://Options/Default.tres");
 func set_board_options(thing : BoardOptions):
 	self.board_options = thing;
 
-# Kinda RAII?
+###################################################################
+# As long as this object lives, the blocks it holds are the "CLEARING" tile.
+# As soon as this object dies, the blocks are replaced with the "EMPTY" tile (or a regular block).
+class ExploderRAII:
+	signal finished_exploding; # Sends itself to a board
+	
+	var board_options : BoardOptions;
+	var to_explode : Array;
+	var to_explode_into : Array;
+	var board : Array;
+	var y_offset = 0;
+	
+	func _init(board_options : BoardOptions, board, to_explode):
+		self.board_options = board_options;
+		self.to_explode = to_explode;
+		self.board = board;
+		for i in range(len(to_explode)):
+			var vec = to_explode[i];
+			if board[vec.x][vec.y] == board_options.GARBAGE:
+				to_explode_into.append(randi() % self.board_options.color_count);
+			else:
+				to_explode_into.append(self.board_options.EMPTY);
+			board[vec.x][vec.y] = board_options.CLEARING;
+	
+	func free():
+		for i in range(len(to_explode)):
+			var vec = to_explode[i];
+			assert(self.board[vec.x][vec.y + y_offset] == board_options.CLEARING);
+			self.board[vec.x][vec.y + y_offset] = self.to_explode_into[i];
+		self.emit_signal("finished_exploding", to_explode, y_offset);
+		.free();
 
-var physics_time = 0;
-var model_explode = [];
-var chain = 0;
-var y_offset = 0;
+###################################################################
 
-var initial_wait = true;
-var visual_explode = [];
-var animation_time = 0;
-var explode_time = 0;
-var effects = [];
+# Model
+var physics_time : float = 0;
+var exploder_raii : ExploderRAII;
+var chain = 1;
 
-func initialize():
-	# Model
-	model_explode = self.get_used_cells();
-	for i in range(len(model_explode)):
-		model_explode[i].y = -model_explode[i].y-1;
-		
-	# View
-	visual_explode = self.get_used_cells();
-	visual_explode.invert();
-	
-	var combo = len(self.model_explode);
-	if (chain != 1):
-		$"HBoxContainer/Chain/Label".text = "x" + str(chain);
-	else:
-		$"HBoxContainer/Chain".free()
-	if (combo > 3):
-		$"HBoxContainer/Combo/Label".text = str(combo);
-	else:
-		$"HBoxContainer/Combo".free()
-	$"HBoxContainer".rect_position = self.map_to_world(visual_explode[-1]) + self.cell_size/2;
-	$"HBoxContainer".rect_position -= $"HBoxContainer".rect_size / 2;
-	
-	effects.append($"Particles2D");
-	while len(effects) <= len(self.visual_explode)-1:
-		var temp = $"Particles2D".duplicate();
-		effects.append(temp);
-		self.add_child(temp);
+# View
+var animation_time : float = 0;
 
-func _process(delta):
-	animation_time += delta;
+func construct(board_options : BoardOptions, board : Array, to_explode : Array, chain : int):
+	self.set_board_options(board_options);
 	
-	# Move to its own script?
-	var popup_speed = 10 * (0.5 - animation_time);
-	$"HBoxContainer".rect_position.y -= delta * self.cell_size.y * popup_speed;
-	$"HBoxContainer".modulate.a *= 0.95;
+	for vec in to_explode:
+		self.set_cell(vec.x, -vec.y-1, board[vec.x][vec.y]);
 	
-	if self.initial_wait:
-		if animation_time >= 0.5 * self.board_options.explode_pause:
-			initial_wait = false;
-		return;
-	
-	explode_time += delta;
-	
-	while self.explode_time >= self.board_options.explode_interval and not self.visual_explode.empty():
-		# TODO: Move to process
-		# Physics Process should only handle the model.
-		self.explode_time -= self.board_options.explode_interval;
-		var thing = self.visual_explode.pop_back();
-		var color = get_cellv(thing);
-		
-		if (color != self.board_options.GARBAGE):
-			self.set_cellv(thing, self.board_options.EMPTY);
-		else:
-			self.set_cellv(thing, randi() % self.board_options.color_count);
-		
-		var effect = self.effects.pop_back();
-		effect.modulate.r = cos((color/5.0) * 2 * PI)/2 + 0.5;
-		effect.modulate.g = cos((color/5.0 - 1/3.0) * 2 * PI)/2 + 0.5;
-		effect.modulate.b = cos((color/5.0 - 2/3.0) * 2 * PI)/2 + 0.5;
-		effect.position = self.map_to_world(thing);
-		effect.position += self.cell_size * 0.5;
-		effect.emitting = true;
-		effect.get_child(0).play();
+	self.exploder_raii = ExploderRAII.new(board_options, board, to_explode);
+	self.chain = chain;
+
+func is_model_relevant():
+	return self.exploder_raii != null;
 
 func _physics_process(delta):
-	physics_time += delta;
+	if not self.is_model_relevant():
+		return;
 	
-	if physics_time >= (self.board_options.explode_pause + self.board_options.explode_interval * len(model_explode)):
-		self.emit_signal("finished_exploding", self.model_explode, self.y_offset, self.chain);
-		# TODO: Move to inside blocks.
-#		for block in model_explode:
-#			var y = -block.y-1 + y_offset;
-#			assert(self.get_blocks().board[block.x][y] == self.board_options.CLEARING);
-#			self.get_blocks().make_faller_column(block.x, y+1, chain + 1);
-#
-#			self.get_blocks().board[block.x][y] = get_cellv(block);
-#			self.get_blocks().chain_checker[block.x][y] = chain+1;
+	self.physics_time += delta;
+	if self.physics_time >= (self.board_options.explode_pause + self.board_options.explode_interval * len(self.exploder_raii.to_explode)):
+		var to_explode = self.exploder_raii.to_explode;
+		var y_offset = self.exploder_raii.y_offset;
 		
-		self.queue_free();
+		# Can't free a reference, but...
+		self.exploder_raii = null;
+		
+		self.emit_signal("finished_exploding", to_explode, y_offset, self.chain);
+
+#func point_slope_madness(t : float):
+#	return max(0, min(len(
+
+func _process(delta):
+	self.animation_time += delta;
 
 func true_raise():
-	y_offset += 1;
+	if (self.exploder_raii != null):
+		self.exploder_raii.y_offset += 1;
