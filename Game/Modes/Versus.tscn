@@ -12,6 +12,7 @@ script = ExtResource( 1 )
 position = Vector2( -330, 0 )
 
 [node name="GarbageMeter" type="Node2D" parent="Board"]
+editor/display_folded = true
 script = ExtResource( 3 )
 
 [node name="icon" type="Sprite" parent="Board/GarbageMeter"]
@@ -38,6 +39,7 @@ texture = ExtResource( 4 )
 position = Vector2( 330, 0 )
 
 [node name="GarbageMeter2" type="Node2D" parent="Board2"]
+editor/display_folded = true
 script = ExtResource( 3 )
 
 [node name="icon" type="Sprite" parent="Board2/GarbageMeter2"]

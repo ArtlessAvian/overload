@@ -130,5 +130,6 @@ autoplay = "1Reset"
 anims/1Reset = SubResource( 2 )
 anims/Lose = SubResource( 3 )
 anims/Start = SubResource( 4 )
+[connection signal="clear" from="Blocks" to="." method="_on_Blocks_clear"]
 
 [editable path="Blocks"]

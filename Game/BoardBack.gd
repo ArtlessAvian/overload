@@ -13,6 +13,7 @@ var current_intensity = 0;
 var color = 0;
 
 func _ready():
+	self.material = self.material.duplicate();
 	pass
 
 func _process(delta):

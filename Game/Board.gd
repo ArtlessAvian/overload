@@ -47,14 +47,19 @@ func lose():
 onready var grace = self.board_options.grace_period;
 
 func _physics_process(delta):
-	if $"Blocks/Exploders".get_child_count() == 0:
-		if $"Blocks".pause <= 0 and not $"Blocks".has_space():
-			self.grace -= delta;
-			if (self.grace <= 0):
-				self.emit_signal("lost", self);
-				self.lose();
-		else:
-			grace = self.board_options.grace_period;
+	if not $"Blocks".any_exploder_active(): # Do not merge with below line.
+		if $"Blocks".pause <= 0:
+			if not $"Blocks".has_space():
+				self.grace -= delta;
+				if (self.grace <= 0):
+					self.emit_signal("lost", self);
+					self.lose();
+			else:
+				grace = self.board_options.grace_period;
+			if self.garbage_inbox > 0:
+				$Blocks.receive_garbage(self.garbage_inbox);
+				self.garbage_inbox = 0;
+			
 
 func _on_Blocks_clear(chain, combo):
 	self.emit_signal("clear", self, chain, combo);

@@ -21,7 +21,7 @@ export (Vector2) var cell_size = Vector2(40, 40);
 export (int) var grace_period = 1;
 
 export (float) var explode_pause = 1.0;
-export (float) var explode_interval = 0.1;
+export (float) var explode_interval = 0.16;
 
 export (float) var rising_speed = 0.2;
 export (float) var faller_speed = 10;

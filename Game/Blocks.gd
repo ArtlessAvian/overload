@@ -1,7 +1,8 @@
 extends TileMap
-# warning-ignore:unused_signal
 signal clear
 class_name Blocks
+
+# TODO: Has too much responsibility. Don't know if thats good or not.
 
 # Always belongs to a Board, as its direct child.
 var board_options : BoardOptions = preload("res://Options/Default.tres");
@@ -53,9 +54,6 @@ func _process(_delta):
 	self.position.y *= self.cell_size.y;
 
 func _physics_process(delta):
-	if (Input.is_action_just_pressed("ui_home")):
-		self.receive_garbage(20);
-	
 	if (self.queue_swap != null):
 		self.swap(self.queue_swap.x, self.queue_swap.y);
 		self.queue_swap = null;
@@ -64,27 +62,30 @@ func _physics_process(delta):
 		self.check();
 		self.queue_check = false;
 	
-	# TODO:  This could be cleaned up.
-	if $"Exploders".get_child_count() == 0 and $Fallers.get_child_count() == 0:
-		if self.pause > 0 and not self.force_raise:
-			self.pause -= delta;
-		else:
-#			if (not self.force_raise) and self.get_board().garbage_inbox > 0:
-#				self.receive_garbage(self.get_board().garbage_inbox);
-#				self.get_board().garbage_inbox = 0;
-			
-			if self.has_space():
-				if (self.fractional_raise < 1):
-					self.fractional_raise += delta * \
-						(self.board_options.force_raise_speed if self.force_raise else self.board_options.rising_speed);
-				else:
-					self.force_raise = false;
-					self.true_raise()
-			else:
-				self.force_raise = false;
-	else:
-		self.force_raise = false;
+	self.process_raise(delta);
 
+### Raising the board
+
+func process_raise(delta):
+	if self.pause > 0 and not self.any_exploder_active():
+		self.pause -= delta;
+	
+	if not self.has_space():
+		self.force_raise = false;
+		return;
+	
+	if not self.force_raise:
+		if self.any_exploder_active():
+			return;
+		elif self.pause > 0:
+			return;
+	 
+	# Finally raise the board.
+	self.fractional_raise += delta * \
+			(self.board_options.force_raise_speed if self.force_raise else self.board_options.rising_speed);
+	if (self.fractional_raise >= 1):
+		self.true_raise();
+		self.force_raise = false;
 
 func prepend_line(first = false):
 	for i in range(len(board)):
@@ -111,31 +112,16 @@ func true_raise():
 	
 	self.check();
 
-func has_space():
-	# Pop trailing empty spaces.
-	for i in range(len(board)):
-		while not board[i].empty() and board[i].back() == self.board_options.EMPTY:
-			board[i].pop_back();
-			chain_checker[i].pop_back();
-	# Now there shouldn't be any empty spaces to overcount.
-	 
-	for array in board:
-		if len(array) >= board_options.board_height:
-			return false;
-	
-	return true
+### Clearing the board
 
 func check():
-	var any_clears = false;
-	var to_clear = []; # Consider changing to a set
+	var to_clear = []; # Will act like a set
 	
 	for x in range(len(board)):
-		to_clear.append([]);
 		var the_spread = spread(in_a_row(board[x]))
-		for item in the_spread:
-			to_clear[x].append(item >= 3);
-			if (item >= 3):
-				any_clears = true;
+		for y in range(len(the_spread)):
+			if (the_spread[y] >= 3):
+				to_clear.append(Vector2(x, y));
 
 	# Assumes there isn't anything to check above the board.
 	for y in range(board_options.board_height): 
@@ -151,30 +137,32 @@ func check():
 		var the_spread = spread(in_a_row(row));
 		for x in range(len(board)):
 			if y < len(board[x]):
-				to_clear[x][y] = to_clear[x][y] or the_spread[x] >= 3;
-				if (the_spread[x] >= 3):
-					any_clears = true;
+				if (the_spread[x] >= 3) and (not Vector2(x, y) in to_clear):
+					to_clear.append(Vector2(x, y));
 	
-	if (any_clears):
+	if (not to_clear.empty()):
 		self.do_clears(to_clear)
 		
 	for x in range(len(self.chain_checker)):
 		for y in range(len(self.chain_checker[x])):
 			self.chain_checker[x][y] = 1;
 
-func do_clears(to_clear):
+static func clear_sorter(a, b):
+	if a.y == b.y:
+		return a.x < b.x;
+	return a.y > b.y;
+
+func do_clears(to_clear : Array):
 	self.force_raise = false; # cut short any raising
-	
-	var to_explode = [];
 	var chain = 1;
 	
-	for x in range(len(board)):
-		for y in range(len(board[x])-1, -1, -1):
-			if (to_clear[x][y]):
-				to_explode.append(Vector2(x, y));
+	to_clear.sort_custom(self, "clear_sorter");
+	
+	for vec in to_clear:
+#			to_explode.append(Vector2(x, y));
 #				exploder.set_cell(x, -y-1, self.board[x][y]);
 #				self.board[x][y] = self.board_options.CLEARING;
-				chain = max(chain, self.chain_checker[x][y]);
+		chain = max(chain, self.chain_checker[vec.x][vec.y]);
 #
 #				# Clear neighboring garbage
 #				for x_off in range(-1, 2):
@@ -185,60 +173,13 @@ func do_clears(to_clear):
 #									exploder.set_cell(x+x_off, -y-y_off-1, self.board[x+x_off][y+y_off]);
 #									self.board[x+x_off][y+y_off] = self.board_options.CLEARING;
 #
-	self.add_new_exploder(to_explode, chain);
-#	self.emit_signal("clear", exploder.chain, len(exploder.model_explode));
+	self.add_new_exploder(to_clear, chain);
+	self.emit_signal("clear", chain, len(to_clear));
 	
 	# TODO: Better formula
 	self.pause = 1;
 
-func make_faller_column(x, y, chain):
-	var blocks = pop_column_slice(x, y);
-	if (blocks != []):
-		self.add_new_faller(x, y, blocks, chain);
-
-func pop_column_slice(x, y):
-	var column = [];
-	
-	var overhang = false;
-	for i in range(y, len(board[x])):
-		if board[x][i] in [5, -1, 7]:
-			overhang = true;
-			break;
-		column.append(board[x][i]);
-	
-	for j in range(len(column)):
-		if (overhang):
-			board[x][y+j] = self.board_options.EMPTY;
-		else:
-			board[x].pop_back();
-			chain_checker[x].pop_back();
-	
-	return column;
-#
-#	var faller = FALLER_SCENE.instance();
-#	faller.construct(x, board[x], chain_checker[x], y, column, chain);
-#	faller.connect("finished_falling", self, "_on_Faller_finished_falling");
-#	faller.set_board_options(self.board_options);
-#	$"Fallers".add_child(faller);
-#	$"Fallers".move_child(faller, 0);
-#	return faller;
-
-func receive_garbage(points):
-	var tallest = board_options.board_height;
-	for col in self.board:
-		tallest = max(tallest, len(col));
-	
-	var shuffle = range(len(self.board));
-	shuffle.shuffle();
-	
-	for i in range(min(points, len(self.board))):
-		var blocks = [];
-		for _j in range(points/len(self.board) + int(i < points % len(self.board))):
-			blocks.append(self.board_options.GARBAGE);
-		
-		var column_index = shuffle.pop_back();
-		
-		self.add_new_faller(column_index, tallest, blocks, 1);
+### Swapping blocks
 
 func swap(x, y):
 	# Prevent swapping with clearing blocks
@@ -280,15 +221,98 @@ func swap(x, y):
 	if (not right_blocks.empty()):
 		self.add_new_faller(x+1, y + int(left_was_empty), right_blocks, 1);
 
+### Garbage Receiving
+
+func receive_garbage(points):
+	var tallest = board_options.board_height;
+	for col in self.board:
+		tallest = max(tallest, len(col));
+	
+	var shuffle = range(len(self.board));
+	shuffle.shuffle();
+	
+	for i in range(min(points, len(self.board))):
+		var blocks = [];
+		for _j in range(points/len(self.board) + int(i < points % len(self.board))):
+			blocks.append(self.board_options.GARBAGE);
+		
+		var column_index = shuffle.pop_back();
+		
+		self.add_new_faller(column_index, tallest, blocks, 1);
+
+### Common Functions and Helpers
+
+func any_exploder_active():
+	# any(exploder.is_model_relevant() for exploder in $Exploders.get_children())
+	for exploder in $Exploders.get_children():
+		if exploder.is_model_relevant():
+			return true
+	return false
+
+func has_space():
+	return tallest_column_height() < self.board_options.board_height;
+
+func tallest_column_height():
+	return len(board[self.tallest_column()]);
+
 func tallest_column():
+	self.pop_trailing_empty();
 	var tallest = 0;
 	for col in range(len(board)):
 		if len(board[col]) > len(board[tallest]):
 			tallest = col;
 	return tallest;
 
-func tallest_column_height():
-	return len(board[self.tallest_column()]);
+func pop_trailing_empty():
+	for i in range(len(board)):
+		while not board[i].empty() and board[i].back() == self.board_options.EMPTY:
+			board[i].pop_back();
+			chain_checker[i].pop_back();
+
+func make_faller_column(x, y, chain):
+	var blocks = pop_column_slice(x, y);
+	if (blocks != []):
+		self.add_new_faller(x, y, blocks, chain);
+
+func pop_column_slice(x, y):
+	var column = [];
+	
+	var overhang = false;
+	for i in range(y, len(board[x])):
+		if board[x][i] in [5, -1, 7]:
+			overhang = true;
+			break;
+		column.append(board[x][i]);
+	
+	for j in range(len(column)):
+		if (overhang):
+			board[x][y+j] = self.board_options.EMPTY;
+		else:
+			board[x].pop_back();
+			chain_checker[x].pop_back();
+	
+	return column;
+
+func in_a_row(array):
+	var out = [];
+	var what = -1;
+	var how_many = 0;
+	for item in array:
+		if (what != item or what < 0 or what >= self.board_options.color_count):
+			what = item;
+			how_many = 1;
+		else:
+			how_many += 1;
+		out.append(how_many)
+	return out;
+
+func spread(array):
+	var out = [];
+	for i in range(len(array)):
+		if (i == len(array)-1 or array[i] >= array[i+1]):
+			for _j in range(array[i]):
+				out.append(array[i]);
+	return out;
 
 ### Adding Children With Signals
 func add_new_faller(x : int, y : float, blocks : Array, chain : int):
@@ -332,25 +356,3 @@ func _on_Exploder_finished_exploding(block_locs, y_offset, chain):
 		while not board[i].empty() and board[i].back() == self.board_options.EMPTY:
 			board[i].pop_back();
 			chain_checker[i].pop_back();
-
-### Helpers
-func in_a_row(array):
-	var out = [];
-	var what = -1;
-	var how_many = 0;
-	for item in array:
-		if (what != item or what < 0 or what >= self.board_options.color_count):
-			what = item;
-			how_many = 1;
-		else:
-			how_many += 1;
-		out.append(how_many)
-	return out;
-
-func spread(array):
-	var out = [];
-	for i in range(len(array)):
-		if (i == len(array)-1 or array[i] >= array[i+1]):
-			for _j in range(array[i]):
-				out.append(array[i]);
-	return out;

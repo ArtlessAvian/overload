@@ -30,11 +30,13 @@ func construct(board_options : BoardOptions, x : int, column : Array, column_cha
 	assert(not blocks.empty());
 	assert(len(self.get_used_cells()) == 0);
 
-#func _ready():
 	self.clear();
 	for j in len(blocks):
 		assert(blocks[j] != 5);
 		self.set_cell(0, -j-1, blocks[j]);
+
+func _ready():
+	self._physics_process(0);
 
 func _process(_delta):
 	self.position.x = self.x;
