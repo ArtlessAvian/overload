@@ -19,7 +19,7 @@ func _ready():
 #		for board in boards:
 #			board.get_node("Blocks").receive_garbage(5)
 
-func _on_Board_clear(board, chain, combo):
+func _on_Board_clear(board, chain, combo, _garbage):
 	for b in boards:
 		if board != b:
 			b.garbage_inbox += int(chain > 1) * 6 + (combo-3);

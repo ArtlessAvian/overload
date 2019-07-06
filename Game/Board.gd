@@ -47,6 +47,9 @@ func lose():
 onready var grace = self.board_options.grace_period;
 
 func _physics_process(delta):
+	if Input.is_action_just_pressed("ui_home"):
+		self.garbage_inbox += 3;
+	
 	if not $"Blocks".any_exploder_active(): # Do not merge with below line.
 		if $"Blocks".pause <= 0:
 			if not $"Blocks".has_space():
@@ -61,5 +64,5 @@ func _physics_process(delta):
 				self.garbage_inbox = 0;
 			
 
-func _on_Blocks_clear(chain, combo):
-	self.emit_signal("clear", self, chain, combo);
+func _on_Blocks_clear(chain, combo, garbage):
+	self.emit_signal("clear", self, chain, combo, garbage);

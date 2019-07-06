@@ -8,12 +8,13 @@ class_name Exploder
 var board_options : BoardOptions = preload("res://Options/Default.tres");
 func set_board_options(thing : BoardOptions):
 	self.board_options = thing;
-	self.cell_size = self.board_options.cell_size;
+#	self.cell_size = self.board_options.cell_size;
 
 ###################################################################
 # As long as this object lives, the blocks it holds are the "CLEARING" tile.
 # As soon as this object dies, the blocks are replaced with the "EMPTY" tile (or a regular block).
 class ExploderRAII:
+	extends Object
 	var board_options : BoardOptions;
 	var to_explode : Array;
 	var to_explode_into : Array;
@@ -23,21 +24,21 @@ class ExploderRAII:
 	func _init(board_options : BoardOptions, board, to_explode):
 		self.board_options = board_options;
 		self.to_explode = to_explode;
+		self.to_explode_into = [];
 		self.board = board;
-		for i in range(len(to_explode)):
-			var vec = to_explode[i];
+		for vec in to_explode:
 			if board[vec.x][vec.y] == board_options.GARBAGE:
 				to_explode_into.append(randi() % self.board_options.color_count);
 			else:
 				to_explode_into.append(self.board_options.EMPTY);
 			board[vec.x][vec.y] = board_options.CLEARING;
 	
-	func free():
-		for i in range(len(to_explode)):
-			var vec = to_explode[i];
-			assert(self.board[vec.x][vec.y + y_offset] == board_options.CLEARING);
-			self.board[vec.x][vec.y + y_offset] = self.to_explode_into[i];
-		.free();
+	func _notification(what):
+		if what == NOTIFICATION_PREDELETE:
+			for i in range(len(to_explode)):
+				var vec = to_explode[i];
+				assert(self.board[vec.x][vec.y + y_offset] == board_options.CLEARING);
+				self.board[vec.x][vec.y + y_offset] = self.to_explode_into[i];
 
 ###################################################################
 
@@ -89,7 +90,7 @@ func _physics_process(delta):
 		var to_explode = self.exploder_raii.to_explode;
 		var y_offset = self.exploder_raii.y_offset;
 		
-		# Can't free a reference, but...
+		self.exploder_raii.free();
 		self.exploder_raii = null;
 		
 		self.emit_signal("finished_exploding", to_explode, y_offset, self.chain);

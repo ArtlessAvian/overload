@@ -201,27 +201,32 @@ static func clear_sorter(a, b):
 
 func do_clears(to_clear : Array):
 	self.force_raise = false; # cut short any raising
+	
 	var chain = 1;
+	for vec in to_clear:
+		chain = max(chain, self.chain_checker[vec.x][vec.y]);
+	
+	var garbage_to_clear = [];
+	var neighbors_to_check = [];
+	for vec in to_clear:
+		for x_off in range(-1, 2):
+			for y_off in range(-1, 2):
+				var neighbor = Vector2(x_off, y_off) + vec;
+				if not neighbor in neighbors_to_check:
+					neighbors_to_check.append(neighbor);
+	for vec in neighbors_to_check:
+		if 0 <= vec.x and vec.x < len(board):
+			if 0 <= vec.y and vec.y < len(board[vec.x]):
+				if (self.board[vec.x][vec.y] == self.board_options.GARBAGE):
+					garbage_to_clear.append(vec);
+
+	for garbage in garbage_to_clear:
+		to_clear.append(garbage);
 	
 	to_clear.sort_custom(self, "clear_sorter");
 	
-	for vec in to_clear:
-#			to_explode.append(Vector2(x, y));
-#				exploder.set_cell(x, -y-1, self.board[x][y]);
-#				self.board[x][y] = self.board_options.CLEARING;
-		chain = max(chain, self.chain_checker[vec.x][vec.y]);
-#
-#				# Clear neighboring garbage
-#				for x_off in range(-1, 2):
-#					for y_off in range(-1, 2):
-#						if 0 <= x + x_off and x + x_off < len(board):
-#							if 0 <= y + y_off and y + y_off < len(board[x+x_off]):
-#								if (self.board[x+x_off][y+y_off] == self.board_options.GARBAGE):
-#									exploder.set_cell(x+x_off, -y-y_off-1, self.board[x+x_off][y+y_off]);
-#									self.board[x+x_off][y+y_off] = self.board_options.CLEARING;
-#
 	self.add_new_exploder(to_clear, chain);
-	self.emit_signal("clear", chain, len(to_clear));
+	self.emit_signal("clear", chain, len(to_clear), len(garbage_to_clear));
 	
 	# TODO: Better formula
 	self.pause = 1;
@@ -372,7 +377,7 @@ func add_faller(faller : Faller):
 	$Fallers.add_child(faller);
 #	$"Fallers".move_child(faller, 0);
 
-func add_new_exploder(to_explode : Array, chain):
+func add_new_exploder(to_explode : Array, chain : int):
 	var exploder : Exploder = EXPLODER_SCENE.instance();
 	exploder.construct(self.board_options, self.board, to_explode, chain);
 	self.add_exploder(exploder);
@@ -396,7 +401,7 @@ func _on_Faller_finished_falling():
 func _on_Exploder_finished_exploding(block_locs, y_offset, chain):
 	for loc in block_locs:
 		var y = loc.y + y_offset;
-		self.board[loc.x][y] = self.board_options.EMPTY;
+#		self.board[loc.x][y] = self.board_options.EMPTY;
 		self.make_faller_column(loc.x, y + 1, chain + 1);
 	
 	for i in range(len(board)):

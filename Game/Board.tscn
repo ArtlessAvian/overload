@@ -1,12 +1,10 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Game/Board.gd" type="Script" id=1]
-[ext_resource path="res://Assets/WigglyShaderMaterial.tres" type="Material" id=2]
-[ext_resource path="res://Assets/BoardBack.png" type="Texture" id=3]
-[ext_resource path="res://Game/BoardBack.gd" type="Script" id=4]
-[ext_resource path="res://Assets/hey_its_me.jpg" type="Texture" id=5]
-[ext_resource path="res://Game/Blocks.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Assets/BoardMask.png" type="Texture" id=7]
+[ext_resource path="res://Assets/BoardBack.png" type="Texture" id=2]
+[ext_resource path="res://Assets/hey_its_me.jpg" type="Texture" id=3]
+[ext_resource path="res://Game/Blocks.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Assets/BoardMask.png" type="Texture" id=5]
 
 [sub_resource type="OccluderPolygon2D" id=1]
 cull_mode = 1
@@ -101,21 +99,19 @@ __meta__ = {
 }
 
 [node name="BoardBack" type="Sprite" parent="."]
-material = ExtResource( 2 )
-texture = ExtResource( 3 )
-script = ExtResource( 4 )
+texture = ExtResource( 2 )
 
 [node name="MascotPhoto" type="Sprite" parent="BoardBack"]
 light_mask = 0
-texture = ExtResource( 5 )
+texture = ExtResource( 3 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 240, 480 )
 
-[node name="Blocks" parent="." instance=ExtResource( 6 )]
+[node name="Blocks" parent="." instance=ExtResource( 4 )]
 
 [node name="Light2D" type="Light2D" parent="."]
 light_mask = 1024
-texture = ExtResource( 7 )
+texture = ExtResource( 5 )
 mode = 3
 range_item_cull_mask = 1024
 shadow_enabled = true

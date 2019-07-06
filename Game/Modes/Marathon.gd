@@ -20,7 +20,7 @@ func _process(_delta):
 	$Grace.text = str($"Board".grace);
 	$Pause.text = str($"Board/Blocks".pause);
 
-func _on_Board_clear(_board, chain, combo):
+func _on_Board_clear(_board, chain, combo, _garbage):
 	while len(chains) <= chain-1:
 		chains.append(0);
 	chains[chain - 1] += 1;
