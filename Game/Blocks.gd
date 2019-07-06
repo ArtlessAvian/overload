@@ -8,13 +8,16 @@ class_name Blocks
 var board_options : BoardOptions = preload("res://Options/Default.tres");
 func set_board_options(thing : BoardOptions):
 	self.board_options = thing;
+#	self.scale = self.board_options.cell_size / self.cell_size;
+#	print(self.scale);
+	self.cell_size = self.board_options.cell_size;
 
 # Model
 const FALLER_SCENE = preload("res://Game/Faller.tscn");
 const EXPLODER_SCENE = preload("res://Game/Exploder.tscn");
 
 var board = []; # outer array is the column. inner array is the row.
-var new_row = [];
+var queued_rows = []; # 3 by column array
 var chain_checker = [] # should act in parallel with the board.
 var queue_check = false;
 
@@ -27,13 +30,17 @@ var pause = 0; # from clearing, or stun from receiving garbage.
 
 func _ready():
 	#### handle model
+	queued_rows = [[], [], []];
 	for _col in range(board_options.board_width):
 		board.append([]);
 		chain_checker.append([])
-		new_row.append(-1);
+		for row in queued_rows:
+			row.append(-1);
 	
-	for row in range(board_options.board_height/2):
-		prepend_line(row == 0)
+	for _i in range(3):
+		self.gen_new_row();
+	for _row in range(board_options.board_height/2):
+		self.prepend_line();
 	
 	#### handle view
 	self.position.x = -board_options.board_width/2;
@@ -47,7 +54,9 @@ func _process(_delta):
 	for col in range(board_options.board_width):
 		for row in range(min(board_options.board_height, len(board[col]))):
 			self.set_cell(col, -row-1, board[col][row]);
-		self.set_cell(col, 0, new_row[col]);
+		self.set_cell(col, 0, queued_rows[2][col]);
+#		self.set_cell(col, 1, queued_rows[1][col]);
+#		self.set_cell(col, 2, queued_rows[0][col]);
 	
 	self.position.y = board_options.board_height/2;
 	self.position.y -= min(1, self.fractional_raise);
@@ -87,21 +96,59 @@ func process_raise(delta):
 		self.true_raise();
 		self.force_raise = false;
 
-func prepend_line(first = false):
-	for i in range(len(board)):
-#		var block_index = i + self.line_count * self.board_options.board_width;
-		if (first):
-			new_row[i] = randi() % board_options.color_count;
+func unique_color(banned_colors):
+	var out = randi() % (board_options.color_count - len(banned_colors));
+	banned_colors.sort();
+	for banned in banned_colors:
+		if out >= banned:
+			out += 1;
+		else:
+			return out;
+	return out;
+
+func gen_new_row():
+	var new_row = [];
+	for _i in range(board_options.board_width):
+		new_row.append(-1);
+	
+	# Permute the middle
+	var generation_order = range(1, board_options.board_width-1);
+#	generation_order.shuffle();
+	# Do the first and last first
+	generation_order.push_front(0);
+	generation_order.push_front(board_options.board_width-1);
+	
+	for i in generation_order:
+		var banned_colors = [];
+		if (queued_rows[0][i] != -1) and (queued_rows[0][i] == queued_rows[1][i]):
+			banned_colors.append(queued_rows[0][i]);
 		
+		# Not the greatest thing i've written
+		if i > 1:
+			if (new_row[i-1] != -1) and (new_row[i-2] == new_row[i-1]):
+				if not new_row[i-1] in banned_colors:
+					banned_colors.append(new_row[i-1]);
+		if i > 0 and i < board_options.board_width-1:
+			if (new_row[i-1] != -1) and (new_row[i-1] == new_row[i+1]):
+				if not new_row[i-1] in banned_colors:
+					banned_colors.append(new_row[i-1]);
+		if i < board_options.board_width - 2:
+			if (new_row[i+1] != -1) and (new_row[i+2] == new_row[i+1]):
+				if not new_row[i+1] in banned_colors:
+					banned_colors.append(new_row[i+1]);
+		
+		new_row[i] = unique_color(banned_colors);
+
+	queued_rows.push_front(new_row);
+	return queued_rows.pop_back();
+
+func prepend_line():
+	var new_row = self.gen_new_row();
+	for i in range(len(board)):
 		board[i].push_front(new_row[i]);
 		chain_checker[i].push_front(1);
 		self.line_count += 1;
-		
-		# Generate a color that isn't the same as the one above.
-#		var new = randi() % (board_options.color_count - 1);
-#		new_row[i] = new + int(new >= new_row[i]);
-		new_row[i] = randi() % board_options.color_count;
-		
+
 func true_raise():
 	self.prepend_line();
 	self.force_raise = false;

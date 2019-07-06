@@ -30,11 +30,6 @@ _global_script_classes=[ {
 "path": "res://Game/Exploder.gd"
 }, {
 "base": "TileMap",
-"class": "Exploder2",
-"language": "GDScript",
-"path": "res://Game/Exploder2.gd"
-}, {
-"base": "TileMap",
 "class": "Faller",
 "language": "GDScript",
 "path": "res://Game/Faller.gd"
@@ -44,7 +39,6 @@ _global_script_class_icons={
 "Board": "",
 "BoardOptions": "",
 "Exploder": "",
-"Exploder2": "",
 "Faller": ""
 }
 

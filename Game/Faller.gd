@@ -5,6 +5,7 @@ class_name Faller
 var board_options : BoardOptions = preload("res://Options/Default.tres");
 func set_board_options(thing : BoardOptions):
 	self.board_options = thing;
+	self.cell_size = self.board_options.cell_size;
 
 # Fallers are groups of blocks traveling together.
 # While falling, they may not be swapped. No bullshitting with that lmao.
