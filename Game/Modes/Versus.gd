@@ -14,7 +14,7 @@ func _ready():
 #var temp = 0;
 #func _physics_process(delta):
 #	temp += delta;
-#	for _i in range(temp/5):
+#	for _i in range(temp/5):sssk
 #		temp -= 5;
 #		for board in boards:
 #			board.get_node("Blocks").receive_garbage(5)
