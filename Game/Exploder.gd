@@ -119,7 +119,7 @@ func _process(delta):
 			dupe.position = self.map_to_world(vec) + self.cell_size/2;
 			dupe.position.y *= -1;
 			dupe.emitting = true;
-			dupe.get_node("AudioStreamPlayer2D").pitch_scale = pow(1.0595, i + chain);
+			dupe.get_node("AudioStreamPlayer2D").pitch_scale = pow(1.0595, i + chain - 1);
 			dupe.get_node("AudioStreamPlayer2D").play();
 			self.add_child(dupe);
 	

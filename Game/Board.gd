@@ -20,6 +20,9 @@ const DEFAULT_OPTIONS : BoardOptions = preload("res://Options/Default.tres");
 var garbage_inbox = 0;
 export (Resource) var board_options : Resource;
 
+### Outputs
+var panic_mode = false;
+
 func _enter_tree():
 	if (board_options == null):
 		self.board_options = DEFAULT_OPTIONS;
@@ -49,6 +52,13 @@ onready var grace = self.board_options.grace_period;
 func _physics_process(delta):
 	if Input.is_action_just_pressed("ui_home"):
 		self.garbage_inbox += 3;
+	
+	if self.panic_mode:
+		if $"Blocks".tallest_column_height() <= board_options.board_height * 1/2:
+			panic_mode = false;
+	else:
+		if $"Blocks".tallest_column_height() >= board_options.board_height * 3/4:
+			panic_mode = true;
 	
 	if not $"Blocks".any_exploder_active(): # Do not merge with below line.
 		if $"Blocks".pause <= 0:

@@ -43,6 +43,16 @@ margin_right = 271.497
 margin_bottom = -69.5701
 align = 2
 valign = 1
+
+[node name="Panic" type="Label" parent="."]
+margin_left = -314.512
+margin_top = -89.8875
+margin_right = -155.512
+margin_bottom = -58.8875
+text = "AHHHHHHHHHHHHHHH
+"
+align = 2
+valign = 1
 [connection signal="clear" from="Board" to="." method="_on_Board_clear"]
 [connection signal="lost" from="Board" to="." method="_on_Board_lost"]
 [connection signal="round_ready" from="Board" to="." method="_on_Board_round_ready"]

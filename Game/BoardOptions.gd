@@ -25,3 +25,6 @@ export (float) var explode_interval = 0.16;
 
 export (float) var rising_speed = 0.2;
 export (float) var faller_speed = 10;
+
+export (float) var cursor_das = 0.5;
+export (float) var cursor_arr = 1.0/60; # Assumes ARR is less than DAS

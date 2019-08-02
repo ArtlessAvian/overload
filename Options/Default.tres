@@ -14,3 +14,5 @@ explode_pause = 1.0
 explode_interval = 0.16
 rising_speed = 0.2
 faller_speed = 10.0
+cursor_das = 0.5
+cursor_arr = 0.0166667

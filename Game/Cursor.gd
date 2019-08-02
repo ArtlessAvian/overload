@@ -11,8 +11,6 @@ const DRAW_OFFSET = Vector2(1, 0.5);
 var cursor_pos = Vector2(2, 5) # Position of the left
 
 # TODO: Make less crude
-var das = 0.3;
-var arr = 1.0/60/12; # Assumes ARR is less than DAS
 var vertical_held = 0;
 var horizontal_held = 0;
 
@@ -38,22 +36,22 @@ func _process(delta):
 	var horizontal = int(Input.is_action_pressed(player + "_right")) - int(Input.is_action_pressed(player + "_left"));
 	if horizontal != 0:
 		horizontal_held += delta;
-		while horizontal_held > das:
+		while horizontal_held > board_options.cursor_das:
 			if horizontal == 1:
 				self.cursor_right();
 			else:
 				self.cursor_left();
-			horizontal_held -= arr;
+			horizontal_held -= board_options.cursor_arr;
 	
 	var vertical = int(Input.is_action_pressed(player + "_down")) - int(Input.is_action_pressed(player + "_up"));
 	if vertical != 0:
 		vertical_held += delta;
-		while vertical_held > das:
+		while vertical_held > board_options.cursor_das:
 			if vertical == 1:
 				self.cursor_down();
 			else:
 				self.cursor_up();
-			vertical_held -= arr;
+			vertical_held -= board_options.cursor_arr;
 	
 	if (Input.is_action_just_pressed(player + "_swap")):
 		self.cursor_swap();

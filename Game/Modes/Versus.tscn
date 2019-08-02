@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Game/Modes/Versus.gd" type="Script" id=1]
 [ext_resource path="res://Game/Board.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Game/Modes/CommonTools/GarbageMeter.gd" type="Script" id=3]
+[ext_resource path="res://Game/Modes/BoardDecorators/GarbageMeter.gd" type="Script" id=3]
 [ext_resource path="res://icon.png" type="Texture" id=4]
+[ext_resource path="res://Game/Modes/BoardDecorators/AI.tscn" type="PackedScene" id=5]
 
 [node name="Versus" type="Node2D"]
 script = ExtResource( 1 )
@@ -61,6 +62,8 @@ texture = ExtResource( 4 )
 [node name="icon5" type="Sprite" parent="Board2/GarbageMeter2"]
 position = Vector2( 130.159, -275.289 )
 texture = ExtResource( 4 )
+
+[node name="AI2" parent="Board2" instance=ExtResource( 5 )]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true

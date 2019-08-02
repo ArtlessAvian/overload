@@ -19,6 +19,7 @@ func start_boards():
 func _process(_delta):
 	$Grace.text = str($"Board".grace);
 	$Pause.text = str($"Board/Blocks".pause);
+	$Panic.visible = $Board.panic_mode;
 
 func _on_Board_clear(_board, chain, combo, _garbage):
 	while len(chains) <= chain-1:
