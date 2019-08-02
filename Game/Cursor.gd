@@ -1,4 +1,6 @@
 extends Sprite
+class_name Cursor
+
 signal swap;
 signal raise;
 
@@ -6,6 +8,13 @@ signal raise;
 var board_options : BoardOptions = preload("res://Options/Default.tres");
 func set_board_options(thing : BoardOptions):
 	self.board_options = thing;
+
+##### TODO: TEMPORARY PUT HERE FOR NOWWWWW.
+export (String) var player = "kb";
+
+export (float) var cursor_das = 0.5;
+export (float) var cursor_arr = 1.0/60; # Assumes ARR is less than DAS
+#####
 
 const DRAW_OFFSET = Vector2(1, 0.5);
 var cursor_pos = Vector2(2, 5) # Position of the left
@@ -18,8 +27,6 @@ func _ready():
 	pass # Replace with function body.
 
 func _process(delta):
-	var player = self.board_options.player;
-	
 	if (Input.is_action_just_pressed(player + "_up")):
 		self.cursor_up();
 		vertical_held = 0;
@@ -36,22 +43,22 @@ func _process(delta):
 	var horizontal = int(Input.is_action_pressed(player + "_right")) - int(Input.is_action_pressed(player + "_left"));
 	if horizontal != 0:
 		horizontal_held += delta;
-		while horizontal_held > board_options.cursor_das:
+		while horizontal_held > cursor_das:
 			if horizontal == 1:
 				self.cursor_right();
 			else:
 				self.cursor_left();
-			horizontal_held -= board_options.cursor_arr;
+			horizontal_held -= cursor_arr;
 	
 	var vertical = int(Input.is_action_pressed(player + "_down")) - int(Input.is_action_pressed(player + "_up"));
 	if vertical != 0:
 		vertical_held += delta;
-		while vertical_held > board_options.cursor_das:
+		while vertical_held > cursor_das:
 			if vertical == 1:
 				self.cursor_down();
 			else:
 				self.cursor_up();
-			vertical_held -= board_options.cursor_arr;
+			vertical_held -= cursor_arr;
 	
 	if (Input.is_action_just_pressed(player + "_swap")):
 		self.cursor_swap();

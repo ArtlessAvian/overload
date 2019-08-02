@@ -16,6 +16,8 @@ signal clear;
 
 const DEFAULT_OPTIONS : BoardOptions = preload("res://Options/Default.tres");
 
+### Temporary Options
+
 ### Inputs?
 var garbage_inbox = 0;
 export (Resource) var board_options : Resource;
