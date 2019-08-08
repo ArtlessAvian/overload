@@ -5,9 +5,10 @@ class_name BoardOptions
 #warning-ignore-all:unused_class_variable
 
 ### Game Constants
-const EMPTY = 7;
+const EMPTY = -1; # 7;
 const CLEARING = 5;
 const GARBAGE = 6;
+const CLEARING_GARBAGE = 7;
 const force_raise_speed = 5;
 
 ### Options

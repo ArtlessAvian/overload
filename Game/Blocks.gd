@@ -236,10 +236,10 @@ func do_clears(to_clear : Array):
 func swap(x, y):
 	# Prevent swapping with clearing blocks
 	if y < len(self.board[x]):
-		if self.board[x][y] == 5:
+		if self.board[x][y] in [board_options.CLEARING, board_options.CLEARING_GARBAGE]:
 			return;
 	if y < len(self.board[x+1]):
-		if self.board[x+1][y] == 5:
+		if self.board[x+1][y] in [board_options.CLEARING, board_options.CLEARING_GARBAGE]:
 			return;
 
 	# Prevent swapping into a faller

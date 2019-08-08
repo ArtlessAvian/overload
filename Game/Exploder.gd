@@ -29,15 +29,16 @@ class ExploderRAII:
 		for vec in to_explode:
 			if board[vec.x][vec.y] == board_options.GARBAGE:
 				to_explode_into.append(randi() % self.board_options.color_count);
+				board[vec.x][vec.y] = board_options.CLEARING_GARBAGE;
 			else:
 				to_explode_into.append(self.board_options.EMPTY);
-			board[vec.x][vec.y] = board_options.CLEARING;
+				board[vec.x][vec.y] = board_options.CLEARING;
 	
 	func _notification(what):
 		if what == NOTIFICATION_PREDELETE:
 			for i in range(len(to_explode)):
 				var vec = to_explode[i];
-				assert(self.board[vec.x][vec.y + y_offset] == board_options.CLEARING);
+				assert(self.board[vec.x][vec.y + y_offset] in [board_options.CLEARING, board_options.CLEARING_GARBAGE]);
 				self.board[vec.x][vec.y + y_offset] = self.to_explode_into[i];
 
 ###################################################################
