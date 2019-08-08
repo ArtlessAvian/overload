@@ -1,5 +1,6 @@
 extends TileMap
 signal clear
+signal true_raise
 class_name Blocks
 
 # TODO: Has too much responsibility. Don't know if thats good or not.
@@ -156,6 +157,7 @@ func true_raise():
 
 	for child in get_children():
 		child.propagate_call("true_raise");
+	self.emit_signal("true_raise");
 	
 	self.check();
 

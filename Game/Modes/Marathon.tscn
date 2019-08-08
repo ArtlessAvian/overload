@@ -3,7 +3,7 @@
 [ext_resource path="res://Game/Modes/Marathon.gd" type="Script" id=1]
 [ext_resource path="res://Game/Board.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Options/FunMode.tres" type="Resource" id=3]
-[ext_resource path="res://Game/Modes/BoardDecorators/AIs/AISorter.gd" type="Script" id=4]
+[ext_resource path="res://Game/Modes/BoardDecorators/AIs/AIStandard.gd" type="Script" id=4]
 
 [node name="Marathon" type="Node2D"]
 script = ExtResource( 1 )
