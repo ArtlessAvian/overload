@@ -10,14 +10,17 @@ func _ready() -> void:
 	._ready();
 
 func queue_moves() -> void:
-#	if blocks.any_exploder_active():
+	if blocks.any_exploder_active() or blocks.get_node("Fallers").get_child_count() != 0:
 		# Extend combo
 		do_raise();
-#	else:
+	else:
+		do_raise();
+		if not flatten():
+			start_combo();
 		# Start combo, Clear garbage, Raise Board
-		if not start_combo():
-			do_raise();
-			flatten();
+#		if not start_combo():
+#			do_raise();
+#			flatten();
 
 func start_combo() -> bool:
 	var last_two_rows = [null, null];
@@ -95,7 +98,7 @@ func get_row(row):
 func get_oob(col : int, row : int):
 	if row < len(blocks.board[col]):
 		return blocks.board[col][row];
-	return -1;
+	return board_options.EMPTY;
 
 func _physics_process(delta: float) -> void:
 	._physics_process(delta);
