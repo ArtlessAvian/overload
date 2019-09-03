@@ -57,7 +57,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Overload"
-run/main_scene="res://Game/Modes/Marathon.tscn"
+run/main_scene="res://Game/Modes/Versus.tscn"
 config/icon="res://icon.png"
 
 [autoload]

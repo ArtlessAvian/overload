@@ -148,7 +148,7 @@ func prepend_line():
 	for i in range(len(board)):
 		board[i].push_front(new_row[i]);
 		chain_checker[i].push_front(1);
-		self.line_count += 1;
+	self.line_count += 1;
 
 func true_raise():
 	self.prepend_line();
