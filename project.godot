@@ -8,14 +8,20 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "Blocks",
+"language": "GDScript",
+"path": "res://board/blocks/BlocksModel.gd"
+} ]
 _global_script_class_icons={
-
+"Blocks": ""
 }
 
 [application]
 
 config/name="Overload"
+run/main_scene="res://test/tests.tscn"
 config/icon="res://icon.png"
 
 [debug]
