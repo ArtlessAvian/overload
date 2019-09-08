@@ -1,0 +1,207 @@
+commit 8f3a3fe6068a0b695faf102c57e6af01b57a7dda
+Author: Ryan <artlessavian@gmail.com>
+Date:   Mon Sep 2 21:05:41 2019 -0700
+
+    dig challenge, dissatisfaction with architecture
+    
+    ok well oof.
+    
+    i think my plan to keep moving forward is to just move everything
+    into a new folder named old, and start fresh with a reference.
+    
+    i believe this is the right move, but theres a nagging feeling
+    im just too scared to work with old code.
+    
+    On a positive note, I'd also like to try out Test Driven Development.
+    It sounds super sick, and works for this game.
+
+commit 6a1728ec1ff44fec80eafbd1811d0dcf39db0f63
+Author: Ryan <artlessavian@gmail.com>
+Date:   Wed Aug 28 22:24:03 2019 -0700
+
+    Whatever AI stuff I did last commit.
+    
+    I don't want to rewrite, but I want to make heavy changes.
+    I can kinda shove them in and hope for the best.
+    So, this is the commit to revert to when things blow up.
+
+commit 77a912b65e573203225bb0486a9c1346ee0af013
+Author: Ryan <artlessavian@gmail.com>
+Date:   Wed Aug 7 21:50:03 2019 -0700
+
+    AI kinda.
+    
+    there probably will only be one ai, but i made an inheritance thing anyways.
+
+commit 897b77170eedf73b6290696087e8a99d0238902f
+Author: Ryan <artlessavian@gmail.com>
+Date:   Wed Aug 7 18:40:44 2019 -0700
+
+    AI Preparation
+
+commit 4512deac13624da3596080ed0dd6f52d4d1c886e
+Author: Ryan <artlessavian@gmail.com>
+Date:   Fri Aug 2 01:58:10 2019 -0700
+
+    Crude AI. (Playtest-able demo?)
+    
+    The AI just sorts each row. Theres also some hacky code that makes the sorter
+    flatten the top, if its working in that area.
+    I'll send it out for testing, even though its not a hard challenge for me.
+
+commit 41a0d8f41622e54914ef2977770b53408771a5ab
+Author: Ryan <artlessavian@gmail.com>
+Date:   Thu Aug 1 23:11:57 2019 -0700
+
+    random press ai
+
+commit 806bdc0cbfccac7741c718ca9de49e3bb42305b6
+Author: Ryan <artlessavian@gmail.com>
+Date:   Thu Aug 1 22:47:24 2019 -0700
+
+    cursor options, panic prototype, prepare for AI
+    
+    back to game dev, after two weeks? fun times.
+
+commit 42521fef91dcf068e9c169669b62d350b7f8ffa0
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sat Jul 6 18:17:50 2019 -0700
+
+    basic DAS and ARR
+
+commit 608e31382d3841dbc102281dad3a54ecd6b7c17f
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sat Jul 6 16:23:40 2019 -0700
+
+    garbage clearing, clearing works as intended
+
+commit b45c99eb9b64b2f10bdca48aed17477b63ad17ea
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sat Jul 6 14:58:17 2019 -0700
+
+    fixed raising causing clears
+
+commit ef84cf90782f1ecee2844d9f155f9d987ebc0a45
+Author: Ryan <artlessavian@gmail.com>
+Date:   Thu Jul 4 18:40:24 2019 -0700
+
+    Blocks cleanup
+
+commit c25f1ff99061943b8b769b8172e1f8fbb65cab82
+Author: Ryan <artlessavian@gmail.com>
+Date:   Fri Jun 28 00:09:45 2019 -0700
+
+    exploders working again
+
+commit 5fee31335312b7581aa98e27109738202aa0ca69
+Author: Ryan <artlessavian@gmail.com>
+Date:   Thu Jun 27 17:11:30 2019 -0700
+
+    exploders half done
+
+commit 392e7daf46364f10de136e0bd3dec0a6aa964f11
+Author: Ryan <artlessavian@gmail.com>
+Date:   Thu Jun 27 15:39:56 2019 -0700
+
+    fix empty faller bug
+
+commit e70ab12987df07b09119ad53434a3a88669ce8cf
+Author: Ryan <artlessavian@gmail.com>
+Date:   Wed Jun 26 23:12:00 2019 -0700
+
+    clean up blocks usage of fallers
+
+commit 1759107e6be6b73aacf81a2f0860659780d7c760
+Author: Ryan <artlessavian@gmail.com>
+Date:   Wed Jun 26 22:10:27 2019 -0700
+
+    not sure what happened here
+
+commit cc8effe00ff01f89c0167eb67a9571d8fe9e34f6
+Author: Ryan <artlessavian@gmail.com>
+Date:   Tue Jun 25 21:41:19 2019 -0700
+
+    Hook up things again.
+    
+    yay it works
+
+commit 1e4599d8582a5cf06e98b5686cba0f3bb755e909
+Author: Ryan <artlessavian@gmail.com>
+Date:   Mon Jun 24 21:21:49 2019 -0700
+
+    Completely Decouple Everything
+    
+    Looks like I forgot to commit a couple files before. Oops.
+    Also this is a regression, as there now needs to be signals everywhere.
+
+commit 6f6e5cf9c3ce430465ed617ac15aa2905abf8105
+Author: Ryan <artlessavian@gmail.com>
+Date:   Mon Jun 24 17:30:54 2019 -0700
+
+    Debug Block, Color Background
+
+commit f808c3124c8df7b4aabf94804eca0efa980ec597
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sat Jun 22 22:25:01 2019 -0700
+
+    wiggly background
+
+commit f457422e394e6a171a74d5ce372cc55abd14232d
+Author: Ryan <artlessavian@gmail.com>
+Date:   Thu Jun 20 22:58:29 2019 -0700
+
+    pause, versus improvements
+
+commit b6cafbf5c0c9a72e745ded148f17da012181301b
+Author: Ryan <artlessavian@gmail.com>
+Date:   Thu Jun 20 21:32:22 2019 -0700
+
+    garbage inboxing, versus "improvements"
+
+commit 684af2a6113b71d0f83797e67932a13608c31917
+Author: Ryan <artlessavian@gmail.com>
+Date:   Wed Jun 19 16:30:11 2019 -0700
+
+    move losing from Blocks to Board, Board Responsibilitise
+
+commit ffc9a19e63005c438984279e35df67a29b79325f
+Author: Ryan <artlessavian@gmail.com>
+Date:   Wed Jun 19 15:08:39 2019 -0700
+
+    cleanup exploder, add hardcoded prepause
+
+commit 0b2c61e71d0747b5587109378322df5b3e671cea
+Author: Ryan <artlessavian@gmail.com>
+Date:   Tue Jun 18 19:16:37 2019 -0700
+
+    exploder view/model sep, crude versus
+
+commit b9f5524de17555ad5c7cf51342f9e20c195851ce
+Author: Ryan <artlessavian@gmail.com>
+Date:   Mon Jun 17 22:53:46 2019 -0700
+
+    cleaning, random stuff
+
+commit c552c886d5d65a168ca076e68613f772d0e4bfe5
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sun Jun 16 19:56:20 2019 -0700
+
+    resize assets
+
+commit eebcbb1afcdb97d28709e4f0c368b595473086dc
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sun Jun 16 03:03:11 2019 -0700
+
+    Marathon, kinda
+
+commit 1f8abc3a85a2bc350acc432bc18bfafb199d7742
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sun Jun 16 00:32:25 2019 -0700
+
+    board, mechanics, garbage
+
+commit d343b711024c82b744df7df012dd2a24e31950db
+Author: Ryan <artlessavian@gmail.com>
+Date:   Sun Jun 16 00:30:09 2019 -0700
+
+    gitignore?

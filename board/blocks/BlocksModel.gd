@@ -2,22 +2,31 @@ extends Node
 class_name Blocks
 signal clear # Int for Chain, Array of Vector2s of all the positions.
 
+const SPECIAL_BLOCKS : Array = [-1];
+
 # Jagged Array
 var _static_blocks : Array = [];
 var _chain_storage : Array = []; # Working in parallel.
 var _queued_rows : Array = [[], [], []]; # 3 x Cols Array. Dequeues from the front.
 
 var _queue_check : bool;
+var _queue_swap : Vector2 = Vector2.INF;
 
 func _init(width : int = 6) -> void:
 	self.init_width(width);
 	self.init_queued_rows();
 
 func _physics_process(delta: float) -> void:
-#	if _queue_check:
-#		_queue_check = false;
-#		check_for_clears();
-	pass
+	if _queue_swap != Vector2.INF:
+		swap(_queue_swap);
+		_queue_swap = Vector2.INF;
+	if _queue_check:
+		_queue_check = false;
+		check_for_clears();
+	if Input.is_action_just_pressed("kb_raise"):
+		push_up();
+	if Input.is_action_just_pressed("ui_accept"):
+		swap(Vector2(3, 3));
 
 # Stuff
 
@@ -68,18 +77,38 @@ func push_up():
 	var popped = self._queued_rows.pop_front();
 	for col in range(self.get_width()):
 		self._static_blocks[col].push_front(popped[col]);
-		self._chain_storage[col].push_front(0);
+		self._chain_storage[col].push_front(1);
 	self._queued_rows.push_back(queue_new_row());
+	
+	self._queue_check = true;
 
-#func check_for_clears():
-#	var clears = detect_in_jagged(_static_blocks);
-#	if not clears.empty():
-#		var max_chain = 1;
-#		for vec in clears:
-#			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
-#		emit_signal("clear", clears)
+func swap(where : Vector2):
+# warning-ignore:narrowing_conversion
+# warning-ignore:narrowing_conversion
+	var temp : int = get_block(where.x, where.y);
+# warning-ignore:narrowing_conversion
+# warning-ignore:narrowing_conversion
+# warning-ignore:narrowing_conversion
+# warning-ignore:narrowing_conversion
+# warning-ignore:narrowing_conversion
+# warning-ignore:narrowing_conversion
+	set_block(where.x, where.y, get_block(where.x+1, where.y));
+# warning-ignore:narrowing_conversion
+# warning-ignore:narrowing_conversion
+	set_block(where.x+1, where.y, temp);
+	
+	self._queue_check = true;
 
-# Getters with some logic
+func check_for_clears():
+	var clears = detect_in_jagged(_static_blocks);
+	if not clears.empty():
+		var max_chain = 1;
+		for vec in clears:
+			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
+		emit_signal("clear", max_chain, clears)
+		print("ayyy")
+
+# Getters and Setters with some logic
 func get_width():
 	return len(_static_blocks);
 
@@ -93,13 +122,40 @@ func get_block(col : int, row : int):
 		return _queued_rows[-1-row][col];
 	# Possible OOB with a row thats too low. Hopefully doesn't happen.
 
+func set_block(col : int, row : int, to : int):
+	while len(_static_blocks[col]) <= row:
+		_static_blocks[col].append(-1);
+		_chain_storage[col].append(1);
+	_static_blocks[col][row] = to;
+
+# Debug
+func to_string():
+	var out = "";
+	
+	var row = 0;
+	while true:
+		var row_str = "";
+		var any = false;
+		for col in range(get_width()):
+			if row < len(_static_blocks[col]):
+				any = true;
+				row_str += str(_static_blocks[col][row]);
+			else:
+				row_str += " ";
+		if not any:
+			break
+		out = row_str + "\n" + out;
+		row += 1;
+	
+	return out.trim_suffix("\n");
+
 # Static Helpers
 static func detect_in_a_row(row):
 	var out = []
 	
 	var doubles = [];
 	for i in range(0, len(row)-1):
-		doubles.append(row[i] == row[i+1])
+		doubles.append(row[i] == row[i+1] and (not row[i] in SPECIAL_BLOCKS));
 	for i in range(0, len(doubles)-1):
 		if doubles[i] and doubles[i+1]:
 			for j in range(i, i+3):
