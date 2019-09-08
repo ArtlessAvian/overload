@@ -6,3 +6,4 @@
 [node name="Blocks" index="0" instance=ExtResource( 1 )]
 
 [node name="BlocksViewDebug" parent="." index="0" instance=ExtResource( 2 )]
+_model_path = NodePath("..")
