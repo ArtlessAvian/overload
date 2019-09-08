@@ -1,4 +1,4 @@
-extends Object
+extends Node
 class_name Blocks
 signal clear # Int for Chain, Array of Vector2s of all the positions.
 
