@@ -2,11 +2,12 @@ extends Node
 class_name Blocks
 signal clear # Int for Chain, Array of Vector2s of all the positions.
 
-const SPECIAL_BLOCKS : Array = [-1];
+const SPECIAL_BLOCKS : Array = [-1, 6];
+const CANNOT_SWITCH : Array = [6];
 
 # Jagged Array
 var _static_blocks : Array = [];
-#var _chain_storage : Array = []; # Working in parallel.
+var _chain_storage : Array = []; # Working in parallel.
 var _queued_rows : Array = [[], [], []]; # 3 x Cols Array. Dequeues from the front.
 
 var _queue_check : bool;
@@ -23,17 +24,12 @@ func _physics_process(delta: float) -> void:
 	if _queue_check:
 		_queue_check = false;
 		check_for_clears();
-	if Input.is_action_just_pressed("kb_raise"):
-		push_up();
-	if Input.is_action_just_pressed("ui_accept"):
-		swap(Vector2(3, 3));
 
 # Stuff
-
 func init_width(width):
 	while len(_static_blocks) != width:
 		_static_blocks.append([]);
-#		_chain_storage.append([]);
+		_chain_storage.append([]);
 		for row in _queued_rows:
 			row.append(-1);
 
@@ -77,46 +73,57 @@ func push_up():
 	var popped = self._queued_rows.pop_front();
 	for col in range(self.get_width()):
 		self._static_blocks[col].push_front(popped[col]);
-#		self._chain_storage[col].push_front(1);
+		self._chain_storage[col].push_front(1);
 	self._queued_rows.push_back(queue_new_row());
-	
-	self._queue_check = true;
 
+	_queue_check = true;
+
+# warning-ignore-all:narrowing_conversion
 func swap(where : Vector2):
-# warning-ignore:narrowing_conversion
-# warning-ignore:narrowing_conversion
+	if get_block(where.x, where.y) in CANNOT_SWITCH:
+		return;
+	if get_block(where.x + 1, where.y) in CANNOT_SWITCH:
+		return;
+		
 	var temp : int = get_block(where.x, where.y);
-# warning-ignore:narrowing_conversion
-# warning-ignore:narrowing_conversion
-# warning-ignore:narrowing_conversion
-# warning-ignore:narrowing_conversion
-# warning-ignore:narrowing_conversion
-# warning-ignore:narrowing_conversion
 	set_block(where.x, where.y, get_block(where.x+1, where.y));
-# warning-ignore:narrowing_conversion
-# warning-ignore:narrowing_conversion
 	set_block(where.x+1, where.y, temp);
 	
-	self._queue_check = true;
+	if get_block(where.x, where.y) == -1:
+		do_fall(where + Vector2.DOWN);
+		do_fall(where + Vector2.RIGHT);
+	if get_block(where.x+1, where.y) == -1:
+		do_fall(where);
+		do_fall(where + Vector2.ONE);
+	
+	_queue_check = true;
 
 func check_for_clears():
 	var clears = detect_in_jagged(_static_blocks);
 	if not clears.empty():
-		emit_signal("clear", clears)
+		var max_chain = 1;
+		for vec in clears:
+			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
+		emit_signal("clear", max_chain, clears)
 		do_clears(clears);
 
 func do_clears(clears : Array):
-	# Not meant to be good for a game, i suppose.
-#	var max_chain = 1;
-#	for vec in clears:
-#		max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
-#	emit_signal("clear", max_chain, clears)
+	# Override me!
 	for clear in clears:
 		set_block(clear.x, clear.y, -1);
-	for col in _static_blocks:
-		for i in range(col.count(-1)):
-			col.erase(-1);
-	self._queue_check = true;
+	
+	for i in range(get_width()):
+		# Abuse of implementation.
+		# Not a real model.
+		do_fall(Vector2(i, 0));
+	
+	print(clears)
+
+func do_fall(where : Vector2):
+	for i in range(_static_blocks[where.x].count(-1)):
+		_static_blocks[where.x].erase(-1);
+	
+	_queue_check = true;
 
 # Getters and Setters with some logic
 func get_width():
@@ -135,7 +142,7 @@ func get_block(col : int, row : int):
 func set_block(col : int, row : int, to : int):
 	while len(_static_blocks[col]) <= row:
 		_static_blocks[col].append(-1);
-#		_chain_storage[col].append(1);
+		_chain_storage[col].append(1);
 	_static_blocks[col][row] = to;
 
 # Debug

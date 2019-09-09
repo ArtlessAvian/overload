@@ -49,3 +49,6 @@ func swap():
 
 func raise():
 	self.emit_signal("raise");
+
+func on_raise():
+	self.up();

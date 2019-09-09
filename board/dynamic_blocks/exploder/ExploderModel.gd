@@ -23,3 +23,7 @@ func _physics_process(delta: float) -> void:
 	if exist_time >= EXPLODE_DELAY + EXPLODE_PERIOD * len(_clears):
 		self.emit_signal("done_exploding", _clears, _colors);
 		self.queue_free();
+
+func on_raise():
+	for i in range(len(_clears)):
+		_clears[i].y += 1;
