@@ -1,8 +1,9 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://board/blocks/BlocksViewDebug.gd" type="Script" id=1]
+[ext_resource path="res://board/dynamic_blocks/blocks/BlocksViewDebug.gd" type="Script" id=1]
 [ext_resource path="res://assets/Test2.tres" type="TileSet" id=2]
 [ext_resource path="res://assets/Test2.png" type="Texture" id=3]
+
 
 [node name="BlocksViewDebug" type="Node2D"]
 script = ExtResource( 1 )

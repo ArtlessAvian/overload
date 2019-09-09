@@ -6,7 +6,7 @@ const SPECIAL_BLOCKS : Array = [-1];
 
 # Jagged Array
 var _static_blocks : Array = [];
-var _chain_storage : Array = []; # Working in parallel.
+#var _chain_storage : Array = []; # Working in parallel.
 var _queued_rows : Array = [[], [], []]; # 3 x Cols Array. Dequeues from the front.
 
 var _queue_check : bool;
@@ -33,7 +33,7 @@ func _physics_process(delta: float) -> void:
 func init_width(width):
 	while len(_static_blocks) != width:
 		_static_blocks.append([]);
-		_chain_storage.append([]);
+#		_chain_storage.append([]);
 		for row in _queued_rows:
 			row.append(-1);
 
@@ -102,10 +102,11 @@ func swap(where : Vector2):
 func check_for_clears():
 	var clears = detect_in_jagged(_static_blocks);
 	if not clears.empty():
-		var max_chain = 1;
-		for vec in clears:
-			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
-		emit_signal("clear", max_chain, clears)
+#		var max_chain = 1;
+#		for vec in clears:
+#			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
+#		emit_signal("clear", max_chain, clears)
+		emit_signal("clear", clears)
 		print("ayyy")
 
 # Getters and Setters with some logic
@@ -125,7 +126,7 @@ func get_block(col : int, row : int):
 func set_block(col : int, row : int, to : int):
 	while len(_static_blocks[col]) <= row:
 		_static_blocks[col].append(-1);
-		_chain_storage[col].append(1);
+#		_chain_storage[col].append(1);
 	_static_blocks[col][row] = to;
 
 # Debug

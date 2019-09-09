@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "Blocks",
 "language": "GDScript",
-"path": "res://board/blocks/BlocksModel.gd"
+"path": "res://board/dynamic_blocks/blocks/BlocksModel.gd"
 } ]
 _global_script_class_icons={
 "Blocks": ""

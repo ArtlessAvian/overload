@@ -20,4 +20,9 @@ Decisions Made:
 
 	* The dimensions of the game do not change after initialization.
 	* Needing to match more than 3 is unfun.
-	
+
+* Board:
+	* Automates the Blocks and all its decorators.
+	* Decorators:
+		* Cursor
+		* Mascot
