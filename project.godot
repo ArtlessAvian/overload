@@ -13,9 +13,27 @@ _global_script_classes=[ {
 "class": "Blocks",
 "language": "GDScript",
 "path": "res://board/dynamic_blocks/blocks/BlocksModel.gd"
+}, {
+"base": "Node2D",
+"class": "Cursor",
+"language": "GDScript",
+"path": "res://board/cursor/CursorModel.gd"
+}, {
+"base": "",
+"class": "DynamicBlocks",
+"language": "GDScript",
+"path": "res://board/dynamic_blocks/DynamicBlocksModel.gd"
+}, {
+"base": "Node2D",
+"class": "Exploder",
+"language": "GDScript",
+"path": "res://board/dynamic_blocks/exploder/ExploderModel.gd"
 } ]
 _global_script_class_icons={
-"Blocks": ""
+"Blocks": "",
+"Cursor": "",
+"DynamicBlocks": "",
+"Exploder": ""
 }
 
 [application]

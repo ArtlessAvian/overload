@@ -77,7 +77,7 @@ func push_up():
 	var popped = self._queued_rows.pop_front();
 	for col in range(self.get_width()):
 		self._static_blocks[col].push_front(popped[col]);
-		self._chain_storage[col].push_front(1);
+#		self._chain_storage[col].push_front(1);
 	self._queued_rows.push_back(queue_new_row());
 	
 	self._queue_check = true;
@@ -102,12 +102,21 @@ func swap(where : Vector2):
 func check_for_clears():
 	var clears = detect_in_jagged(_static_blocks);
 	if not clears.empty():
-#		var max_chain = 1;
-#		for vec in clears:
-#			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
-#		emit_signal("clear", max_chain, clears)
 		emit_signal("clear", clears)
-		print("ayyy")
+		do_clears(clears);
+
+func do_clears(clears : Array):
+	# Not meant to be good for a game, i suppose.
+#	var max_chain = 1;
+#	for vec in clears:
+#		max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
+#	emit_signal("clear", max_chain, clears)
+	for clear in clears:
+		set_block(clear.x, clear.y, -1);
+	for col in _static_blocks:
+		for i in range(col.count(-1)):
+			col.erase(-1);
+	self._queue_check = true;
 
 # Getters and Setters with some logic
 func get_width():

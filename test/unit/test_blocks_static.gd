@@ -1,6 +1,6 @@
 extends "res://addons/GUT/test.gd"
 
-var BlocksScript = load("res://board/blocks/BlocksModel.gd");
+var BlocksScript = load("res://board/dynamic_blocks/blocks/BlocksModel.gd");
 var b : Blocks = BlocksScript.new();
 
 func test_detect_in_a_row():

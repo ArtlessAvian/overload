@@ -1,6 +1,6 @@
 extends "res://addons/GUT/test.gd"
 
-var BlocksScript = load("res://board/blocks/BlocksModel.gd");
+var BlocksScript = load("res://board/dynamic_blocks/blocks/BlocksModel.gd");
 
 func test_initable():
 	assert_not_null(BlocksScript.new());
