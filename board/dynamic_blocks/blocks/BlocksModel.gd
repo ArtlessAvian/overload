@@ -69,7 +69,7 @@ func queue_new_row():
 	
 	return out;
 
-func push_up():
+func raise():
 	var popped = self._queued_rows.pop_front();
 	for col in range(self.get_width()):
 		self._static_blocks[col].push_front(popped[col]);
@@ -104,7 +104,7 @@ func check_for_clears():
 		var max_chain = 1;
 		for vec in clears:
 			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
-		emit_signal("clear", max_chain, clears)
+		emit_signal("clear", max_chain, clears);
 		do_clears(clears);
 
 func do_clears(clears : Array):
@@ -116,8 +116,6 @@ func do_clears(clears : Array):
 		# Abuse of implementation.
 		# Not a real model.
 		do_fall(Vector2(i, 0));
-	
-	print(clears)
 
 func do_fall(where : Vector2):
 	for i in range(_static_blocks[where.x].count(-1)):
@@ -160,7 +158,7 @@ func to_string():
 			else:
 				row_str += " ";
 		if not any:
-			break
+			break;
 		out = row_str + "\n" + out;
 		row += 1;
 	
@@ -197,7 +195,7 @@ static func detect_in_jagged(jagged_array):
 	for row in range(max_height_col):
 		var contents = [];
 		for col in range(len(jagged_array)):
-			contents.append(-1 if len(jagged_array[col]) <= row else jagged_array[col][row])
+			contents.append(-1 if len(jagged_array[col]) <= row else jagged_array[col][row]);
 		for col in detect_in_a_row(contents):
 			var vec = Vector2(col, row);
 			if not vec in out:

@@ -9,7 +9,7 @@ func test_initable():
 func test_faller_falls():
 	var f : Faller = FALLER_PRELOAD.new([], 0, 10, [], []);
 	simulate(f, 10, 0.1);
-	assert_almost_eq(f._y, 9.0, 0.001)
+	assert_almost_eq(f._y, 9.0, 0.001);
 
 func test_faller_lands_on_nothing():
 	var col : Array = [];

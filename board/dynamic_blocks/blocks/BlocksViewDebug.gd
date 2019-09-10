@@ -10,7 +10,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	var model : Blocks = self.get_node(_model_path);
 	
-	$TileMap.clear()
+	$TileMap.clear();
 	for col in range(model.get_width()):
 		for row in range(-3, 12):
 			$TileMap.set_cell(col, row, model.get_block(col, row));

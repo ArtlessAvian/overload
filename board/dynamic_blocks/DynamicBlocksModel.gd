@@ -6,8 +6,8 @@ signal new_faller; # Faller Model
 const EXPLODER_SCRIPT = preload("res://board/dynamic_blocks/exploder/ExploderModel.gd");
 const FALLER_SCRIPT = preload("res://board/dynamic_blocks/faller/FallerModel.gd");
 
-func push_up():
-	.push_up();
+func raise():
+	.raise();
 	propagate_call("on_raise");
 
 func do_clears(clears : Array):
@@ -27,7 +27,6 @@ func on_Exploder_done_exploding(exploder, clears, colors):
 		# Nice.
 
 func do_fall(where : Vector2, chain : int = 1):
-	print(where)
 	# warning-ignore-all:narrowing_conversion
 	if get_block(where.x, where.y-1) != -1:
 		# Not sure if returning silently when theres nothing to fall is a good idea.

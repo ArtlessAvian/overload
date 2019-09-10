@@ -34,5 +34,5 @@ func _physics_process(delta: float) -> void:
 				else:
 					_static_col[y_int+offset] = _slice[offset];
 					_chain_col[y_int+offset] = _chain;
-			self.emit_signal("done_falling", self)
+			self.emit_signal("done_falling", self);
 			self.queue_free()

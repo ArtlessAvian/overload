@@ -56,4 +56,4 @@ func test_swap_arg_correct():
 	
 	watch_signals(c);
 	c.swap();
-	assert_signal_emitted_with_parameters(c, "swap", [Vector2(1, 2)])
+	assert_signal_emitted_with_parameters(c, "swap_requested", [Vector2(1, 2)])

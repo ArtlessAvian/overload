@@ -1,7 +1,7 @@
 extends Node2D
 class_name Cursor
-signal swap # Vector2.
-signal raise # Vector2.
+signal swap_requested; # Vector2.
+signal raise_requested; # Vector2.
 
 var _player : String;
 var _blocks : Blocks;
@@ -15,18 +15,18 @@ func _init(player : String = "kb", bounds : Vector2 = Vector2(6, 12)):
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(_player + "_up"):
-		up()
+		up();
 	if event.is_action_pressed(_player + "_down"):
-		down()
+		down();
 	if event.is_action_pressed(_player + "_left"):
-		left()
+		left();
 	if event.is_action_pressed(_player + "_right"):
-		right()
+		right();
 	
 	if event.is_action_pressed(_player + "_swap"):
-		swap()
+		swap();
 	if event.is_action_pressed(_player + "_raise"):
-		raise()
+		raise();
 
 func up():
 	if _position.y + 1 < _bounds.y:
@@ -45,10 +45,10 @@ func right():
 		_position.x += 1;
 
 func swap():
-	self.emit_signal("swap", _position);
+	self.emit_signal("swap_requested", _position);
 
 func raise():
-	self.emit_signal("raise");
+	self.emit_signal("raise_requested");
 
 func on_raise():
 	self.up();

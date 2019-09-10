@@ -12,7 +12,7 @@ func test_width_was_init():
 		
 #		assert_eq(len(b._chain_storage), i);
 		for queued in b._queued_rows:
-			assert_eq(len(queued), i)
+			assert_eq(len(queued), i);
 
 func test_queued_was_init():
 	var b : Blocks = BlocksScript.new(10);
@@ -24,7 +24,7 @@ func test_no_clears_in_queued():
 	var b : Blocks = BlocksScript.new(100);
 	assert_true(b.detect_in_jagged(b._queued_rows).empty());
 
-func test_push_up_order():
+func test_raise_order():
 	var b : Blocks = BlocksScript.new(1);
 	
 	var remembered = [];
@@ -32,7 +32,7 @@ func test_push_up_order():
 		remembered.append(b.get_block(0, i));
 	
 	for i in range(10):
-		b.push_up();
+		b.raise();
 		var slice = [];
 		for i in range(-2, 10):
 			slice.append(b.get_block(0, i));
@@ -43,15 +43,15 @@ func test_push_up_order():
 func test_no_clears_without_interaction():
 	var b : Blocks = BlocksScript.new(100);
 	for i in range(100):
-		b.push_up();
+		b.raise();
 	assert_true(b.detect_in_jagged(b._static_blocks).empty());
 
 func test_swap_swaps():
 	var b : Blocks = BlocksScript.new(3);
 	var row = b._queued_rows[0];
 	var other_row = b._queued_rows[1];
-	b.push_up();
-	b.push_up();
+	b.raise();
+	b.raise();
 	
 	b.swap(Vector2(0, 0));
 	assert_eq(b.get_block(0, 0), other_row[1]);

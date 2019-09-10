@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://board/dynamic_blocks/DynamicBlocksModel.gd" type="Script" id=1]
+[ext_resource path="res://board/dynamic_blocks/DynamicBlocksViewDebug.tscn" type="PackedScene" id=2]
+[ext_resource path="res://board/cursor/CursorModel.gd" type="Script" id=3]
+[ext_resource path="res://board/cursor/CursorViewDebug.tscn" type="PackedScene" id=4]
+
+[node name="BoardModel" type="Node2D"]
+
+[node name="DynamicBlocksModel" type="Node2D" parent="."]
+script = ExtResource( 1 )
+
+[node name="DynamicBlocksViewDebug" parent="DynamicBlocksModel" instance=ExtResource( 2 )]
+_model_path = NodePath("..")
+
+[node name="CursorModel" type="Node2D" parent="."]
+script = ExtResource( 3 )
+
+[node name="CursorViewDebug" parent="CursorModel" instance=ExtResource( 4 )]
+_model_path = NodePath("..")
+[connection signal="new_faller" from="DynamicBlocksModel" to="DynamicBlocksModel/DynamicBlocksViewDebug" method="on_DynamicBlocksModel_new_faller"]
+[connection signal="raise_requested" from="CursorModel" to="DynamicBlocksModel" method="raise"]
+[connection signal="swap_requested" from="CursorModel" to="DynamicBlocksModel" method="swap"]
