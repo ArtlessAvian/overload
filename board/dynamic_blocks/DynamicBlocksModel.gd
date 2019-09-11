@@ -6,9 +6,20 @@ signal new_faller; # Faller Model
 const EXPLODER_SCRIPT = preload("res://board/dynamic_blocks/exploder/ExploderModel.gd");
 const FALLER_SCRIPT = preload("res://board/dynamic_blocks/faller/FallerModel.gd");
 
+var _exploders : Array = [];
+var _fallers : Array = [];
+
 func raise():
 	.raise();
 	propagate_call("on_raise");
+
+func swap(where : Vector2):
+	for faller in _fallers:
+		if faller._x == where.x or faller._x == where.x+1:
+			if floor(faller._y) <= where.y and where.y < floor(faller._y + len(faller._slice)):
+				return;
+	
+	.swap(where);
 
 func do_clears(clears : Array):
 	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, self);
@@ -44,13 +55,16 @@ func do_fall(where : Vector2, chain : int = 1):
 	if slice.empty():
 		return;
 	
-	var faller : Faller = FALLER_SCRIPT.new(slice, where.x, where.y, _static_blocks[where.x], _chain_storage[where.x], chain);
+	var faller : Faller = FALLER_SCRIPT.new(where, 5, slice, _static_blocks[where.x], _chain_storage[where.x], chain);
 	self.add_child(faller);
+	_fallers.append(faller);
+	
 	faller.connect("done_falling", self, "on_Faller_done_falling");
 	self.emit_signal("new_faller", faller);
 
 func on_Faller_done_falling(faller):
 	self._queue_check = true;
+	_fallers.erase(faller);
 
 func clean_trailing_empty():
 	for col in _static_blocks:

@@ -5,14 +5,18 @@ signal done_falling;
 var _slice : Array;
 var _x : int;
 var _y : float;
+var _fall_speed : float;
 var _static_col : Array;
 var _chain_col : Array;
 var _chain : int;
 
-func _init(slice : Array, x : int, y : int, static_col : Array, chain_col : Array, chain : int = 1):
+func _init(pos : Vector2, fall_speed : float, slice : Array, static_col : Array, chain_col : Array, chain : int = 1):
+# warning-ignore-all:narrowing_conversion
+# oh well.
+	_x = pos.x;
+	_y = pos.y;
+	_fall_speed = fall_speed;
 	_slice = slice;
-	_x = x;
-	_y = y;
 	_static_col = static_col;
 	_chain_col = chain_col;
 	_chain = chain;
@@ -22,7 +26,7 @@ func on_raise():
 	pass
 
 func _physics_process(delta: float) -> void:
-	_y -= delta;
+	_y -= delta * _fall_speed;
 	if _y <= len(_static_col):
 		# warning-ignore:narrowing_conversion
 		var y_int : int = max(0, ceil(_y));
