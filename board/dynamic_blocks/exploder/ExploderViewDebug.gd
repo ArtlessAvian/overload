@@ -1,12 +1,16 @@
 extends TileMap
 
-var _model : Faller;
+var _model : Exploder;
+var _first_y : int;
 
 func _init_custom(model) -> void:
 	_model = model;
-	position.x = _model._x * 40;
-	for i in range(len(_model._slice)):
-		self.set_cell(0, i, _model._slice[i]);
+	
+	_first_y = _model._clears[0].y;
+	
+	for i in range(len(_model._clears)):
+		var vec = _model._clears[i];
+		self.set_cell(vec.x, vec.y, _model._colors[i]);
 
 # Called when the node enters the scene tree for the first time.
 func _process(delta) -> void:
@@ -14,4 +18,4 @@ func _process(delta) -> void:
 		self.queue_free();
 		return;
 	
-	position.y = _model._y * -40;
+	self.position.y = -40 * (_model._clears[0].y - _first_y);

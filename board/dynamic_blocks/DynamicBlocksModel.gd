@@ -22,15 +22,13 @@ func swap(where : Vector2):
 	.swap(where);
 
 func do_clears(clears : Array):
-	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, self);
+	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, _static_blocks);
 	self.add_child(exploder);
 	exploder.connect("done_exploding", self, "on_Exploder_done_exploding");
 	self.emit_signal("new_exploder", exploder);
 
 func on_Exploder_done_exploding(exploder, clears, colors):
-	for clear in clears:
-		set_block(clear.x, clear.y, -1);
-	
+	clean_trailing_empty();
 	# Reverse order for descending y.
 	for i in range(len(clears)-1, -1, -1):
 		do_fall(clears[i] + Vector2.DOWN);
@@ -67,6 +65,7 @@ func on_Faller_done_falling(faller):
 	_fallers.erase(faller);
 
 func clean_trailing_empty():
-	for col in _static_blocks:
-		while col.back() == -1:
-			col.pop_back();
+	for col in range(get_width()):
+		while _static_blocks[col].back() == -1:
+			_static_blocks[col].pop_back();
+			_chain_storage[col].pop_back();
