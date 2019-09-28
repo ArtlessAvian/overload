@@ -83,3 +83,15 @@ func test_faller_tunneling_into_solid_block():
 func test_faller_tunneling_into_empty_space():
 	var col : Array = [-1, -1, 0]
 	pending();
+
+func test_faller_signals_landing():
+	var col : Array = [];
+	var chain_col : Array = [];
+	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 2), 1, [1337], col, chain_col);
+	
+	watch_signals(f);
+	assert_signal_not_emitted(f, "done_falling");
+	simulate(f, 19, 0.1);
+	assert_signal_not_emitted(f, "done_falling");
+	simulate(f, 2, 0.1);
+	assert_signal_emitted_with_parameters(f, "done_falling", [f]);

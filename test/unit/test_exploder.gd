@@ -13,6 +13,15 @@ func test_exploders_delete_in_array():
 	simulate(e, 1, 10000);
 	assert_eq(dummy_array, [[-1, 1], [2, -1]]);
 
+func test_exploders_signals_done():
+	var e : Exploder = EXPLODER_PRELOAD.new([], []);
+	watch_signals(e);
+	assert_signal_not_emitted(e, "done_exploding");
+	simulate(e, 1, 0);
+	assert_signal_not_emitted(e, "done_exploding");
+	simulate(e, 1, 1000);
+	assert_signal_emitted(e, "done_exploding", [e, [], []]);
+
 func test_exploders_frees_self():
 	var e : Exploder = EXPLODER_PRELOAD.new([], []);
 	assert_false(e.is_queued_for_deletion());
