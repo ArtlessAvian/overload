@@ -29,7 +29,7 @@ func test_faller_lands_on_nothing():
 func test_faller_lands_in_space():
 	var col : Array = [0, -1, -1, -1, -1, 0];
 	var chain_col : Array = [1, 1, 1, 1, 1];
-	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), 1, [7, 7, 7], col, chain_col, 2);
+	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), 1, [7, 7, 7], col, chain_col);
 	
 	simulate(f, 19, 0.1);
 	assert_false(f.is_queued_for_deletion());
@@ -49,32 +49,32 @@ func test_faller_lands_on_last():
 func test_faller_appends_on_nothing():
 	var col : Array = [];
 	var chain_col : Array = [];
-	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 2), 1, [1337], col, chain_col);
+	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 2), 1, [1337], col, chain_col, 666);
 	
 	simulate(f, 21, 0.1);
 	
 	assert_eq(col, [1337]);
-	assert_eq(chain_col, [1]);
+	assert_eq(chain_col, [666]);
 
 func test_faller_appends_in_space():
 	var col : Array = [0, -1, -1, -1, -1, 0];
 	var chain_col : Array = [1, 1, 1, 1, 1];
-	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), 1, [7, 7, 7], col, chain_col, 2);
+	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), 1, [7, 7, 7], col, chain_col, 123);
 	
 	simulate(f, 21, 0.1);
 	
 	assert_eq(col, [0, 7, 7, 7, -1, 0]);
-	assert_eq(chain_col, [1, 2, 2, 2, 1]);
+	assert_eq(chain_col, [1, 123, 123, 123, 1]);
 
 func test_faller_appends_on_last():
 	var col : Array = [0];
 	var chain_col : Array = [1];
-	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), 1, [7, 7, 7], col, chain_col, 2);
+	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), 1, [7, 7, 7], col, chain_col, 21197);
 	
 	simulate(f, 21, 0.1);
 
 	assert_eq(col, [0, 7, 7, 7]);
-	assert_eq(chain_col, [1, 2, 2, 2]);
+	assert_eq(chain_col, [1, 21197, 21197, 21197]);
 
 func test_faller_tunneling_into_solid_block():
 	var col : Array = [0, 0, 0]

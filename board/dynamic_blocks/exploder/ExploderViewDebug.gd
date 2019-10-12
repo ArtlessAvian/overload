@@ -3,10 +3,11 @@ extends TileMap
 var _model : Exploder;
 var _first_y : int;
 
-func _init_custom(model) -> void:
+func _init_custom(model : Exploder) -> void:
 	_model = model;
 	
 	_first_y = _model._clears[0].y;
+	$Label.text = str(len(model._clears));
 	
 	for i in range(len(_model._clears)):
 		var vec = _model._clears[i];

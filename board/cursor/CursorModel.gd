@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 class_name Cursor
 signal swap_requested; # Vector2.
 signal raise_requested; # Vector2.
