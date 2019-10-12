@@ -7,7 +7,7 @@ func _init_custom(model : Exploder) -> void:
 	_model = model;
 	
 	_first_y = _model._clears[0].y;
-	$Label.text = str(len(model._clears));
+	$Label.text = str(len(model._clears), " ", model._chain);
 	
 	for i in range(len(_model._clears)):
 		var vec = _model._clears[i];

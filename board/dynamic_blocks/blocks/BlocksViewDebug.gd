@@ -14,3 +14,8 @@ func _process(delta: float) -> void:
 	for col in range(model.get_width()):
 		for row in range(-3, 12):
 			$TileMap.set_cell(col, row, model.get_block(col, row));
+
+	$TileMap2.clear();
+	for col in range(model.get_width()):
+		for row in range(len(model._chain_storage[col])):
+			$TileMap2.set_cell(col, row, model._chain_storage[col][row]);

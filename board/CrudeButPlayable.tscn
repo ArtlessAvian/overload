@@ -14,9 +14,11 @@ script = ExtResource( 1 )
 script = ExtResource( 2 )
 
 [node name="DynamicBlocksViewDebug" parent="." instance=ExtResource( 3 )]
+model_path = NodePath("../DynamicBlocksModel")
 
 [node name="CursorViewDebug" parent="." instance=ExtResource( 4 )]
-[connection signal="new_exploder" from="DynamicBlocksModel" to="DynamicBlocksViewDebug" method="_on_DynamicBlocksModel_new_exploder"]
+model_path = NodePath("../CursorModel")
+[connection signal="new_exploder" from="DynamicBlocksModel" to="DynamicBlocksViewDebug" method="new_exploder"]
 [connection signal="new_faller" from="DynamicBlocksModel" to="DynamicBlocksViewDebug" method="new_faller"]
 [connection signal="raise_requested" from="CursorModel" to="DynamicBlocksModel" method="raise"]
 [connection signal="swap_requested" from="CursorModel" to="DynamicBlocksModel" method="swap"]

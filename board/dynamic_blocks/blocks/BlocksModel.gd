@@ -1,6 +1,6 @@
 extends Node
 class_name Blocks
-signal clear # Int for Chain, Array of Vector2s of all the positions.
+signal clear # Array of Vector2s of all the positions, Int for Chain.
 
 const SPECIAL_BLOCKS : Array = [-1, 6];
 const CANNOT_SWITCH : Array = [6];
@@ -11,16 +11,16 @@ var _chain_storage : Array = []; # Working in parallel.
 var _queued_rows : Array = [[], [], []]; # 3 x Cols Array. Dequeues from the front.
 
 var _queue_check : bool;
-var _queue_swap : Vector2 = Vector2.INF;
+#var _queue_swap : Vector2 = Vector2.INF;
 
 func _init(width : int = 6) -> void:
 	self.init_width(width);
 	self.init_queued_rows();
 
 func _physics_process(delta: float) -> void:
-	if _queue_swap != Vector2.INF:
-		swap(_queue_swap);
-		_queue_swap = Vector2.INF;
+#	if _queue_swap != Vector2.INF:
+#		swap(_queue_swap);
+#		_queue_swap = Vector2.INF;
 	if _queue_check:
 		_queue_check = false;
 		check_for_clears();
@@ -90,11 +90,11 @@ func swap(where : Vector2):
 	set_block(where.x+1, where.y, temp);
 	
 	if get_block(where.x, where.y) == -1:
-		do_fall(where + Vector2.DOWN);
-		do_fall(where + Vector2.RIGHT);
+		do_fall(where + Vector2.DOWN, 1);
+		do_fall(where + Vector2.RIGHT, 1);
 	if get_block(where.x+1, where.y) == -1:
-		do_fall(where);
-		do_fall(where + Vector2.ONE);
+		do_fall(where, 1);
+		do_fall(where + Vector2.ONE, 1);
 	
 	_queue_check = true;
 
@@ -104,23 +104,32 @@ func check_for_clears():
 		var max_chain = 1;
 		for vec in clears:
 			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
-		emit_signal("clear", max_chain, clears);
-		do_clears(clears);
+		emit_signal("clear", clears, max_chain);
+		print(clears, max_chain)
+		do_clears(clears, max_chain);
 
-func do_clears(clears : Array):
+	for col in range(len(_chain_storage)):
+		for row in range(len(_chain_storage[col])):
+			if not Vector2(col, row) in clears:
+				_chain_storage[col][row] = 1;
+
+func do_clears(clears : Array, chain : int):
 	# Override me!
 	for clear in clears:
 		set_block(clear.x, clear.y, -1);
 	
-	for i in range(get_width()):
-		# Abuse of implementation.
-		# Not a real model.
-		do_fall(Vector2(i, 0));
+	for clear in clears:
+		do_fall(clear, chain);
 
-func do_fall(where : Vector2):
-	for i in range(_static_blocks[where.x].count(-1)):
-		_static_blocks[where.x].erase(-1);
+func do_fall(where : Vector2, chain : int):
+	for i in range(where.y+1, len(_static_blocks[where.x])):
+		_chain_storage[where.x][i] = chain + 1;
 	
+	for i in range(_static_blocks[where.x].count(-1)):
+		var y = _static_blocks[where.x].find_last(-1);
+		_chain_storage[where.x].remove(y);
+		_static_blocks[where.x].remove(y);
+
 	_queue_check = true;
 
 # Getters and Setters with some logic

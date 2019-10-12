@@ -9,13 +9,14 @@ var _clears : Array;
 var _colors : Array;
 var _static_blocks : Array;
 
-var _combo : int;
+var _chain : int;
 
 var exist_time = 0;
 
-func _init(clears : Array, static_blocks : Array) -> void:
+func _init(clears : Array, static_blocks : Array, chain : int = 1) -> void:
 	_clears = clears;
 	_static_blocks = static_blocks;
+	_chain = chain;
 	
 	_colors = [];
 	for vec in _clears:
@@ -28,7 +29,7 @@ func _physics_process(delta: float) -> void:
 		for vec in _clears:
 			_static_blocks[vec.x][vec.y] = -1;
 		
-		self.emit_signal("done_exploding", self, _clears, _colors, _combo);
+		self.emit_signal("done_exploding", self, _clears, _colors, _chain);
 		self.queue_free();
 
 func on_raise():

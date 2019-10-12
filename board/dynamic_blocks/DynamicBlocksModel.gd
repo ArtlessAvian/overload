@@ -24,21 +24,21 @@ func swap(where : Vector2):
 	
 	.swap(where);
 
-func do_clears(clears : Array):
-	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, _static_blocks);
+func do_clears(clears : Array, max_chain : int):
+	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, _static_blocks, max_chain);
 	self.add_child(exploder);
 	exploder.connect("done_exploding", self, "on_Exploder_done_exploding");
 	self.emit_signal("new_exploder", exploder);
 
-func on_Exploder_done_exploding(exploder, clears, colors):
+func on_Exploder_done_exploding(exploder, clears, colors, chain):
 	clean_trailing_empty();
 	# Reverse order for descending y.
 	for i in range(len(clears)-1, -1, -1):
-		do_fall(clears[i] + Vector2.DOWN);
+		do_fall(clears[i] + Vector2.DOWN, chain + 1);
 		# DOWN is y+. UP is y-.
 		# Nice.
 
-func do_fall(where : Vector2, chain : int = 1):
+func do_fall(where : Vector2, chain : int):
 	# warning-ignore-all:narrowing_conversion
 	if get_block(where.x, where.y-1) != -1:
 		# Not sure if returning silently when theres nothing to fall is a good idea.
