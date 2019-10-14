@@ -77,6 +77,8 @@ func raise():
 	self._queued_rows.push_back(queue_new_row());
 
 	_queue_check = true;
+	
+	propagate_call("on_raise");
 
 # warning-ignore-all:narrowing_conversion
 func swap(where : Vector2):

@@ -24,9 +24,9 @@ func _input(event: InputEvent) -> void:
 		right();
 	
 	if event.is_action_pressed(_player + "_swap"):
-		swap();
+		request_swap();
 	if event.is_action_pressed(_player + "_raise"):
-		raise();
+		request_raise();
 
 func up():
 	if _position.y + 1 < _bounds.y:
@@ -44,10 +44,10 @@ func right():
 	if _position.x + 1 + 1 < _bounds.x:
 		_position.x += 1;
 
-func swap():
+func request_swap():
 	self.emit_signal("swap_requested", _position);
 
-func raise():
+func request_raise():
 	self.emit_signal("raise_requested");
 
 func on_raise():

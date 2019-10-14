@@ -19,4 +19,4 @@ func _process(delta) -> void:
 		self.queue_free();
 		return;
 	
-	self.position.y = -40 * (_model._clears[0].y - _first_y);
+	self.position.y = round(-40 * (_model._clears[0].y - _first_y));

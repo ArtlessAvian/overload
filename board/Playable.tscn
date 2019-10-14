@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://board/BoardModel.gd" type="Script" id=1]
+[ext_resource path="res://board/BoardWithDefaultView.gd" type="Script" id=1]
 
 [node name="Board" type="Node"]
 script = ExtResource( 1 )

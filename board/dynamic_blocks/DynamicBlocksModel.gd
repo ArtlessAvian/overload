@@ -1,4 +1,4 @@
-extends "blocks/BlocksModel.gd"
+extends Blocks
 class_name DynamicBlocks
 signal new_exploder; # Exploder Model
 signal new_faller; # Faller Model
@@ -14,7 +14,6 @@ func _init(width : int = 6) -> void:
 
 func raise():
 	.raise();
-	propagate_call("on_raise");
 
 func swap(where : Vector2):
 	for faller in _fallers:
