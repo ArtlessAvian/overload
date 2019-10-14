@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Numbers.png-30921c277d557842f7e87760d49ecf4e.stex"
+path="res://.import/BoardMask.png-d2a7921c761047467773b1a734d81b1f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Numbers.png"
-dest_files=[ "res://.import/Numbers.png-30921c277d557842f7e87760d49ecf4e.stex" ]
+source_file="res://assets/BoardMask.png"
+dest_files=[ "res://.import/BoardMask.png-d2a7921c761047467773b1a734d81b1f.stex" ]
 
 [params]
 

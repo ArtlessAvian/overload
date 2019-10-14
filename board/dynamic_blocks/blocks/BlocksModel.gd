@@ -4,6 +4,7 @@ signal clear # Array of Vector2s of all the positions, Int for Chain.
 
 const SPECIAL_BLOCKS : Array = [-1, 6];
 const CANNOT_SWITCH : Array = [6];
+const NUM_COLORS : int = 5;
 
 # Jagged Array
 var _static_blocks : Array = [];
@@ -65,7 +66,7 @@ func queue_new_row():
 			if not _queued_rows[0][col] in bans:
 				bans.append(_queued_rows[0][col]);
 		
-		out[col] = random_with_bans(6, bans);
+		out[col] = random_with_bans(NUM_COLORS, bans);
 	
 	return out;
 

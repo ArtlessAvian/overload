@@ -9,7 +9,7 @@ func _ready() -> void:
 	self._view.model_path = self.get_path();
 	print(self._view.model_path)
 	self._view.get_node("DynamicBlocksViewDebug").model_path = self._dynamic_blocks.get_path()
-	self._view.get_node("CursorViewDebug").model_path = self._cursor.get_path()
+	self._view.find_node("CursorViewDebug").model_path = self._cursor.get_path()
 
 	self._dynamic_blocks.connect("new_exploder", _view.get_node("DynamicBlocksViewDebug"), "new_exploder");
 	self._dynamic_blocks.connect("new_faller", _view.get_node("DynamicBlocksViewDebug"), "new_faller");
