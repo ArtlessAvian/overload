@@ -2,8 +2,8 @@ extends Node
 class_name Blocks
 signal clear # Array of Vector2s of all the positions, Int for Chain.
 
-const SPECIAL_BLOCKS : Array = [-1, 6];
-const CANNOT_SWITCH : Array = [6];
+const SPECIAL_BLOCKS : Array = [-1, -2];
+const CANNOT_SWITCH : Array = [-2];
 const NUM_COLORS : int = 5;
 
 # Jagged Array
@@ -12,16 +12,12 @@ var _chain_storage : Array = []; # Working in parallel.
 var _queued_rows : Array = [[], [], []]; # 3 x Cols Array. Dequeues from the front.
 
 var _queue_check : bool;
-#var _queue_swap : Vector2 = Vector2.INF;
 
 func _init(width : int = 6) -> void:
 	self.init_width(width);
 	self.init_queued_rows();
 
 func _physics_process(delta: float) -> void:
-#	if _queue_swap != Vector2.INF:
-#		swap(_queue_swap);
-#		_queue_swap = Vector2.INF;
 	if _queue_check:
 		_queue_check = false;
 		check_for_clears();
@@ -149,6 +145,9 @@ func get_block(col : int, row : int):
 		return _queued_rows[-1-row][col];
 	# Possible OOB with a row thats too low. Hopefully doesn't happen.
 
+func is_settled() -> bool:
+	return not _queue_check;
+
 func set_block(col : int, row : int, to : int):
 	while len(_static_blocks[col]) <= row:
 		_static_blocks[col].append(-1);
@@ -156,24 +155,19 @@ func set_block(col : int, row : int, to : int):
 	_static_blocks[col][row] = to;
 
 # Debug
-func to_string():
+func column_to_string(col : int) -> String:
+	var out = "";
+	for item in _static_blocks[col]:
+		out += str(item);
+	return out;
+
+func to_string() -> String:
 	var out = "";
 	
-	var row = 0;
-	while true:
-		var row_str = "";
-		var any = false;
-		for col in range(get_width()):
-			if row < len(_static_blocks[col]):
-				any = true;
-				row_str += str(_static_blocks[col][row]);
-			else:
-				row_str += " ";
-		if not any:
-			break;
-		out = row_str + "\n" + out;
-		row += 1;
-	
+	for col in range(len(_static_blocks)):
+		out += "Row " + str(col) + ": ";
+		out += column_to_string(col);
+		out += "\n";
 	return out.trim_suffix("\n");
 
 # Static Helpers

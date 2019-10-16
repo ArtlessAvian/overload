@@ -15,9 +15,9 @@ func test_regular_combo():
 	var clears = [];
 	for i in range(4):
 		clears.append(Vector2(0, i));
-	assert_signal_emitted_with_parameters(b, "clear", [1, clears])
+	assert_signal_emitted_with_parameters(b, "clear", [clears, 1]);
 
-func tset_combos_sorted():
+func test_combos_sorted():
 	pending();
 	
 func test_dropping_combo():
@@ -41,4 +41,4 @@ func test_dropping_combo():
 		clears.append(Vector2(0, i+1));
 	for i in range(3):
 		clears.append(Vector2(1, i));
-	assert_signal_emitted_with_parameters(b, "clear", [1, clears])
+	assert_signal_emitted_with_parameters(b, "clear", [clears, 1])

@@ -71,3 +71,30 @@ func clean_trailing_empty():
 		while _static_blocks[col].back() == -1:
 			_static_blocks[col].pop_back();
 			_chain_storage[col].pop_back();
+
+# Getters
+func is_settled() -> bool:
+	return _fallers.empty() and _exploders.empty() and .is_settled();
+
+# Debug
+func column_to_string(col : int) -> String:
+	# Terrible code but this is only for debugging.
+	var out = "";
+	for i in range(len(_static_blocks[col])):
+		out += str(_static_blocks[col][i]) + "  ";
+
+	var last = len(_static_blocks[col]);
+	for faller in _fallers:
+		if faller._x == col:
+			out.erase(len(out)-1, 1);
+			for i in range(last, faller._y):
+				out += "   ";
+			last = faller._y;
+			
+			out += "<"
+			for content in faller._slice:
+				out += str(content) + "  ";
+			out.erase(len(out)-2, 2);
+			out += "> ";
+	return out;
+	

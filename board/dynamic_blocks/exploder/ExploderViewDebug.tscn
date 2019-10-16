@@ -11,6 +11,19 @@ cell_custom_transform = Transform2D( 40, 0, 0, -40, 0, 0 )
 format = 1
 script = ExtResource( 2 )
 
-[node name="Label" type="Label" parent="."]
-margin_right = 40.0
-margin_bottom = 14.0
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -7.0
+margin_top = -7.0
+margin_right = 7.0
+margin_bottom = 7.0
+
+[node name="Label" type="Label" parent="PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 38.0
+margin_bottom = 21.0
+text = "yello"

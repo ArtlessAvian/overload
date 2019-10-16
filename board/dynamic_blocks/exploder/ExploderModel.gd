@@ -24,6 +24,10 @@ func _init(clears : Array, static_blocks : Array, chain : int = 1) -> void:
 		_static_blocks[vec.x][vec.y] = 6;
 
 func _physics_process(delta: float) -> void:
+	if self.is_queued_for_deletion():
+		return;
+		# GUT doesnt free stuff. >:(
+	
 	exist_time += delta;
 	if exist_time >= EXPLODE_DELAY + EXPLODE_PERIOD * len(_clears):
 		for vec in _clears:

@@ -26,6 +26,10 @@ func on_raise():
 	pass
 
 func _physics_process(delta: float) -> void:
+	if self.is_queued_for_deletion():
+		return;
+		# GUT doesnt free stuff. >:(
+	
 	_y -= delta * _fall_speed;
 	if _y <= len(_static_col):
 		# warning-ignore:narrowing_conversion

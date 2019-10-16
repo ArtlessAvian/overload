@@ -78,6 +78,7 @@ func test_faller_appends_on_last():
 
 func test_faller_tunneling_into_solid_block():
 	var col : Array = [0, 0, 0]
+	var chain_col : Array = [1, 1, 1];
 	pending();
 	
 func test_faller_tunneling_into_empty_space():

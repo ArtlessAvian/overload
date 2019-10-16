@@ -7,7 +7,10 @@ func _init_custom(model : Exploder) -> void:
 	_model = model;
 	
 	_first_y = _model._clears[0].y;
-	$Label.text = str(len(model._clears), " ", model._chain);
+	$PanelContainer/Label.text = str(len(model._clears), " x", model._chain);
+	$PanelContainer.rect_position = _model._clears[-1] * 40;
+	$PanelContainer.rect_position.y *= -1;
+	$PanelContainer.rect_position.y -= $PanelContainer.rect_size.y;
 	
 	for i in range(len(_model._clears)):
 		var vec = _model._clears[i];

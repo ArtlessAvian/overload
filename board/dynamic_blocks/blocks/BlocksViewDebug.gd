@@ -13,7 +13,9 @@ func _process(delta: float) -> void:
 	$TileMap.clear();
 	for col in range(model.get_width()):
 		for row in range(-3, 12):
-			$TileMap.set_cell(col, row, model.get_block(col, row));
+			var tile = model.get_block(col, row);
+			tile = tile if tile != -2 else 6;
+			$TileMap.set_cell(col, row, tile);
 
 	$TileMap2.clear();
 	for col in range(model.get_width()):
