@@ -20,7 +20,7 @@ func test_regular_chain():
 	assert_signal_emitted_with_parameters(b, "clear", [clears, 1])
 	
 	simulate(b, 1, 0.8); # Exploder finishes exploding
-	simulate(b, 3, 0.2); # Faller finishes falling
+	simulate(b, 3, 1); # Faller finishes falling
 	simulate(b, 1, 0); # Queued check checks.
 	
 	clears.clear();
@@ -50,9 +50,9 @@ func test_massive_chain():
 		simulate(b, 1, 0); # Queued check checks.
 		assert_signal_emitted_with_parameters(b, "clear", [left_clears, 2 * i + 1])
 		simulate(b, 1, 0.8); # Exploder finishes exploding
-		simulate(b, 3, 0.2); # Faller finishes falling
+		simulate(b, 1, 1); # Faller finishes falling
 
 		simulate(b, 1, 0); # Queued check checks.
 		assert_signal_emitted_with_parameters(b, "clear", [right_clears, 2 * i + 2])
 		simulate(b, 1, 0.8); # Exploder finishes exploding
-		simulate(b, 3, 0.2); # Faller finishes falling
+		simulate(b, 1, 1); # Faller finishes falling

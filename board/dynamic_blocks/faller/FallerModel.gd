@@ -5,17 +5,15 @@ signal done_falling;
 var _slice : Array;
 var _x : int;
 var _y : float;
-var _fall_speed : float;
 var _static_col : Array;
 var _chain_col : Array;
 var _chain : int;
 
-func _init(pos : Vector2, fall_speed : float, slice : Array, static_col : Array, chain_col : Array, chain : int = 1):
+func _init(pos : Vector2, slice : Array, static_col : Array, chain_col : Array, chain : int = 1):
 # warning-ignore-all:narrowing_conversion
 # oh well.
 	_x = pos.x;
 	_y = pos.y;
-	_fall_speed = fall_speed;
 	_slice = slice;
 	_static_col = static_col;
 	_chain_col = chain_col;
@@ -30,7 +28,7 @@ func _physics_process(delta: float) -> void:
 		return;
 		# GUT doesnt free stuff. >:(
 	
-	_y -= delta * _fall_speed;
+	_y -= delta;
 	if _y <= len(_static_col):
 		# warning-ignore:narrowing_conversion
 		var y_int : int = max(0, ceil(_y));

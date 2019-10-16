@@ -55,7 +55,7 @@ func do_fall(where : Vector2, chain : int):
 	if slice.empty():
 		return;
 	
-	var faller : Faller = FALLER_SCRIPT.new(where, 5, slice, _static_blocks[where.x], _chain_storage[where.x], chain);
+	var faller : Faller = FALLER_SCRIPT.new(where, slice, _static_blocks[where.x], _chain_storage[where.x], chain);
 	self.add_child(faller);
 	_fallers.append(faller);
 	

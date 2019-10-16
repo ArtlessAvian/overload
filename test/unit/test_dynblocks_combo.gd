@@ -32,7 +32,7 @@ func test_dropping_combo():
 	assert_signal_not_emitted(b, "clear");
 	simulate(b, 1, 0);
 	assert_signal_not_emitted(b, "clear");
-	simulate(b, 2, 0.1);
+	simulate(b, 1, 1);
 	assert_signal_not_emitted(b, "clear");
 	simulate(b, 1, 0);
 	
