@@ -10,7 +10,7 @@ func test_regular_combo():
 	watch_signals(b);
 	b.swap(Vector2(0, 2));
 	simulate(b, 1, 0);
-	print(b._static_blocks);
+#	print(b._static_blocks);
 	
 	var clears = [];
 	for i in range(4):
@@ -26,9 +26,9 @@ func test_dropping_combo():
 	b._chain_storage = [[1, 1, 1, 1, 1], [1, 1]];
 	
 	watch_signals(b);
-	print(b._static_blocks)
+#	print(b._static_blocks)
 	b.swap(Vector2(0, 3));
-	print(b._static_blocks)
+#	print(b._static_blocks)
 	assert_signal_not_emitted(b, "clear");
 	simulate(b, 1, 0);
 	assert_signal_not_emitted(b, "clear");

@@ -21,7 +21,7 @@ func _init(clears : Array, static_blocks : Array, chain : int = 1) -> void:
 	_colors = [];
 	for vec in _clears:
 		_colors.append(_static_blocks[vec.x][vec.y]);
-		_static_blocks[vec.x][vec.y] = 6;
+		_static_blocks[vec.x][vec.y] = -2;
 
 func _physics_process(delta: float) -> void:
 	if self.is_queued_for_deletion():
@@ -36,6 +36,6 @@ func _physics_process(delta: float) -> void:
 		self.emit_signal("done_exploding", self, _clears, _colors, _chain);
 		self.queue_free();
 
-func on_raise():
+func raise():
 	for i in range(len(_clears)):
 		_clears[i].y += 1;

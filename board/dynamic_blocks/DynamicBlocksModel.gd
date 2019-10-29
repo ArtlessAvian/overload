@@ -12,9 +12,6 @@ var _fallers : Array = [];
 func _init(width : int = 6) -> void:
 	._init(width);
 
-func raise():
-	.raise();
-
 func swap(where : Vector2):
 	for faller in _fallers:
 		if faller._x == where.x or faller._x == where.x+1:

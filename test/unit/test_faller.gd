@@ -76,10 +76,23 @@ func test_faller_appends_on_last():
 	assert_eq(col, [0, 7, 7, 7]);
 	assert_eq(chain_col, [1, 21197, 21197, 21197]);
 
+func test_faller_tunneling_into_oob():
+	var col : Array = []
+	var chain_col : Array = [];
+	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), [7], col, chain_col, 21197);
+
+	simulate(f, 1, 1000);
+	assert_eq(col, [7]);
+	assert_eq(chain_col, [21197]);
+
 func test_faller_tunneling_into_solid_block():
-	var col : Array = [0, 0, 0]
+	var col : Array = [1, 1, 1]
 	var chain_col : Array = [1, 1, 1];
-	pending();
+	var f : Faller = FALLER_PRELOAD.new(Vector2(0, 3), [7], col, chain_col, 21197);
+
+	simulate(f, 1, 1);
+	assert_eq(col, [1, 1, 1, 7]);
+	assert_eq(chain_col, [1, 1, 1, 21197]);
 	
 func test_faller_tunneling_into_empty_space():
 	var col : Array = [-1, -1, 0]

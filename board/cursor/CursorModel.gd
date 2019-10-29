@@ -50,5 +50,5 @@ func request_swap():
 func request_raise():
 	self.emit_signal("raise_requested");
 
-func on_raise():
+func raise():
 	self.up();

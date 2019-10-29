@@ -75,7 +75,7 @@ func raise():
 
 	_queue_check = true;
 	
-	propagate_call("on_raise");
+#	propagate_call("on_raise");
 
 # warning-ignore-all:narrowing_conversion
 func swap(where : Vector2):
@@ -104,7 +104,7 @@ func check_for_clears():
 		for vec in clears:
 			max_chain = max(max_chain, _chain_storage[vec.x][vec.y]);
 		emit_signal("clear", clears, max_chain);
-		print(clears, max_chain)
+#		print(clears, max_chain)
 		do_clears(clears, max_chain);
 
 	for col in range(len(_chain_storage)):
