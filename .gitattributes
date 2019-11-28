@@ -1,0 +1,10 @@
+# Highly refrenced from
+# https://help.github.com/en/github/using-git/configuring-git-to-handle-line-endings
+
+* text=auto
+
+*.tscn text eol=lf
+*.gd text eol=lf
+*.tres text eol=lf
+*.md5 text eol=lf
+project.godot text eol=lf

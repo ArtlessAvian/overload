@@ -23,10 +23,12 @@ func swap(where : Vector2):
 func do_clears(clears : Array, max_chain : int):
 	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, _static_blocks, max_chain);
 	self.add_child(exploder);
+	_exploders.append(exploder);
 	exploder.connect("done_exploding", self, "on_Exploder_done_exploding");
 	self.emit_signal("new_exploder", exploder);
 
 func on_Exploder_done_exploding(exploder, clears, colors, chain):
+	_exploders.erase(exploder);
 	clean_trailing_empty();
 	# Reverse order for descending y.
 	for i in range(len(clears)-1, -1, -1):
