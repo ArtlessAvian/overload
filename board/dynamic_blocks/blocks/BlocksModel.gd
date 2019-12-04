@@ -66,6 +66,10 @@ func queue_new_row():
 	
 	return out;
 
+func propagate_raise():
+	propagate_call("raise");
+	raise();
+
 func raise():
 	var popped = self._queued_rows.pop_front();
 	for col in range(self.get_width()):
@@ -74,8 +78,6 @@ func raise():
 	self._queued_rows.push_back(queue_new_row());
 
 	_queue_check = true;
-	
-#	propagate_call("on_raise");
 
 # warning-ignore-all:narrowing_conversion
 func swap(where : Vector2):

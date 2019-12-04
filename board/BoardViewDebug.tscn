@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://board/BoardView.gd" type="Script" id=1]
+[ext_resource path="res://board/BoardViewDebug.gd" type="Script" id=1]
 [ext_resource path="res://assets/BoardBack.png" type="Texture" id=2]
 [ext_resource path="res://assets/hey_its_me.jpg" type="Texture" id=3]
 [ext_resource path="res://board/dynamic_blocks/DynamicBlocksViewDebug.tscn" type="PackedScene" id=4]

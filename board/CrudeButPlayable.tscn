@@ -20,5 +20,5 @@ model_path = NodePath("../DynamicBlocksModel")
 model_path = NodePath("../CursorModel")
 [connection signal="new_exploder" from="DynamicBlocksModel" to="DynamicBlocksViewDebug" method="new_exploder"]
 [connection signal="new_faller" from="DynamicBlocksModel" to="DynamicBlocksViewDebug" method="new_faller"]
-[connection signal="raise_requested" from="CursorModel" to="DynamicBlocksModel" method="raise"]
+[connection signal="raise_requested" from="CursorModel" to="DynamicBlocksModel" method="propagate_raise"]
 [connection signal="swap_requested" from="CursorModel" to="DynamicBlocksModel" method="swap"]

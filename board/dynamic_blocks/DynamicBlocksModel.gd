@@ -67,7 +67,7 @@ func on_Faller_done_falling(faller):
 
 func clean_trailing_empty():
 	for col in range(get_width()):
-		while _static_blocks[col].back() == -1:
+		while not _static_blocks[col].empty() and _static_blocks[col].back() == -1:
 			_static_blocks[col].pop_back();
 			_chain_storage[col].pop_back();
 
@@ -96,4 +96,7 @@ func column_to_string(col : int) -> String:
 			out.erase(len(out)-2, 2);
 			out += "> ";
 	return out;
-	
+
+
+func propagate_raise() -> void:
+	pass # Replace with function body.

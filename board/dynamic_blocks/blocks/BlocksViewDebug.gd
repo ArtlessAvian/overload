@@ -3,8 +3,8 @@ extends Node2D
 export (NodePath) var model_path : NodePath;
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
+#func _ready() -> void:
+#	var model : Blocks = self.get_node(model_path);
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

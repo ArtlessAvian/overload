@@ -16,6 +16,7 @@ func _ready() -> void:
 	self._dynamic_blocks.connect("new_faller", self, "new_faller");
 	
 	self._cursor = Cursor.new();
+	self._cursor._bounds.x = 6;
 	self.add_child(self._cursor);
 	self._cursor.connect("raise_requested", self, "request_raise");
 	self._cursor.connect("stop_raise_requested", self, "request_stop_raise");
@@ -47,7 +48,7 @@ func request_raise() -> void:
 	self._raise_requested = true;
 
 func request_stop_raise() -> void:
-	print("received request")
+#	print("received request")
 	self._stop_raise_requested = true;
 
 func new_faller(faller : Faller) -> void:

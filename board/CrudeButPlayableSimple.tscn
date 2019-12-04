@@ -18,5 +18,5 @@ script = ExtResource( 3 )
 
 [node name="CursorViewDebug" parent="CursorModel" instance=ExtResource( 4 )]
 model_path = NodePath("..")
-[connection signal="raise_requested" from="CursorModel" to="BlocksModel" method="raise"]
+[connection signal="raise_requested" from="CursorModel" to="BlocksModel" method="propagate_raise"]
 [connection signal="swap_requested" from="CursorModel" to="BlocksModel" method="swap"]
