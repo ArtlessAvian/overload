@@ -36,6 +36,6 @@ func _physics_process(delta: float) -> void:
 		self.emit_signal("done_exploding", self, _clears, _colors, _chain);
 		self.queue_free();
 
-func raise():
+func on_board_raise():
 	for i in range(len(_clears)):
 		_clears[i].y += 1;

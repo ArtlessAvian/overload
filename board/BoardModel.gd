@@ -23,14 +23,14 @@ func _ready() -> void:
 	self._cursor.connect("swap_requested", self._dynamic_blocks, "swap");
 	
 	for i in range(4):
-		self._dynamic_blocks.raise();
+		self._dynamic_blocks.on_board_raise();
 
 func _physics_process(delta: float) -> void:
 	if self._dynamic_blocks.is_settled() and get_height() < 12:
 		self._partial_raise += delta * (0.2 if not self._raise_requested else 5.0);
 		while self._partial_raise > 1:
 			self._partial_raise -= 1;
-			self.propagate_call("raise");
+			self.propagate_call("on_board_raise");
 			self._raise_requested = self._raise_requested and not self._stop_raise_requested;
 			self._stop_raise_requested = false;
 			if get_height() >= 12:

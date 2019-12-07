@@ -32,7 +32,7 @@ func test_raise_order():
 		remembered.append(b.get_block(0, i));
 	
 	for i in range(10):
-		b.raise();
+		b.on_board_raise();
 		var slice = [];
 		for i in range(-2, 10):
 			slice.append(b.get_block(0, i));
@@ -43,15 +43,15 @@ func test_raise_order():
 func test_no_clears_without_interaction():
 	var b : Blocks = BlocksScript.new(100);
 	for i in range(100):
-		b.raise();
+		b.on_board_raise();
 	assert_true(b.detect_in_jagged(b._static_blocks).empty());
 
 func test_swap_swaps():
 	var b : Blocks = BlocksScript.new(3);
 	var row = b._queued_rows[0];
 	var other_row = b._queued_rows[1];
-	b.raise();
-	b.raise();
+	b.on_board_raise();
+	b.on_board_raise();
 	
 	b.swap(Vector2(0, 0));
 	assert_eq(b.get_block(0, 0), other_row[1]);

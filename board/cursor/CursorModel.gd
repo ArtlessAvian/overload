@@ -56,5 +56,5 @@ func request_raise():
 func request_stop_raise():
 	self.emit_signal("stop_raise_requested");
 
-func raise():
+func on_board_raise():
 	self.up();

@@ -19,7 +19,7 @@ func _init(pos : Vector2, slice : Array, static_col : Array, chain_col : Array, 
 	_chain_col = chain_col;
 	_chain = chain;
 
-func raise():
+func on_board_raise():
 	_y += 1;
 
 func _physics_process(delta: float) -> void:

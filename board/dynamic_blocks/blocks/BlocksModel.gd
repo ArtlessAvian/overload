@@ -67,10 +67,10 @@ func queue_new_row():
 	return out;
 
 func propagate_raise():
-	propagate_call("raise");
-	raise();
+	propagate_call("on_board_raise");
+	on_board_raise();
 
-func raise():
+func on_board_raise():
 	var popped = self._queued_rows.pop_front();
 	for col in range(self.get_width()):
 		self._static_blocks[col].push_front(popped[col]);
