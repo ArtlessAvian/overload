@@ -54,18 +54,24 @@ func do_fall(where : Vector2, chain : int):
 	if slice.empty():
 		return;
 	
+	add_new_faller(where, slice, chain);
+
+func add_new_faller(where : Vector2, slice : Array, chain : int):
 	var faller : Faller = FALLER_SCRIPT.new(where, slice, _static_blocks[where.x], _chain_storage[where.x], chain);
+	add_faller(faller);
+
+func add_faller(faller : Faller):
 	self.add_child(faller);
 	_fallers.append(faller);
 	
 	faller.connect("done_falling", self, "on_Faller_done_falling");
 	self.emit_signal("new_faller", faller);
 
-func on_Faller_done_falling(faller):
+func on_Faller_done_falling(faller : Faller) -> void:
 	self._queue_check = true;
 	_fallers.erase(faller);
 
-func clean_trailing_empty():
+func clean_trailing_empty() -> void:
 	for col in range(get_width()):
 		while not _static_blocks[col].empty() and _static_blocks[col].back() == -1:
 			_static_blocks[col].pop_back();
