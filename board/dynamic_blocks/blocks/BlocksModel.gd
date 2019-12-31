@@ -2,8 +2,14 @@ extends Node
 class_name Blocks
 signal clear # Array of Vector2s of all the positions, Int for Chain.
 
-const SPECIAL_BLOCKS : Array = [-1, -2];
-const CANNOT_SWITCH : Array = [-2];
+const AIR : int = -1;
+const CLEARING : int = -2;
+const GARBAGE : int = -3;
+
+const CANNOT_CLEAR : Array = [AIR, CLEARING, GARBAGE];
+const CANNOT_FALL : Array = [AIR, CLEARING]
+const CANNOT_SWITCH : Array = [CLEARING];
+
 const NUM_COLORS : int = 5;
 
 # Jagged Array
@@ -24,7 +30,7 @@ func _physics_process(delta: float) -> void:
 
 # Stuff
 func init_width(width):
-	while len(_static_blocks) != width:
+	while get_width() != width:
 		_static_blocks.append([]);
 		_chain_storage.append([]);
 		for row in _queued_rows:
@@ -101,6 +107,7 @@ func swap(where : Vector2):
 
 func check_for_clears():
 	var clears = detect_in_jagged(_static_blocks);
+	clears = union_nearby_garbage(_static_blocks, clears);
 	if not clears.empty():
 		var max_chain = 1;
 		for vec in clears:
@@ -133,11 +140,23 @@ func do_fall(where : Vector2, chain : int):
 
 	_queue_check = true;
 
+func receive_garbage(amount : int) -> void:
+	for i in range(amount - amount % get_width()):
+		_static_blocks[i].append(GARBAGE);
+		_chain_storage[i].append(0);
+
+	var shuffle = range(get_width());
+	shuffle.shuffle();
+	
+	for i in range(amount % get_width()):
+		_static_blocks[shuffle[i]].append(GARBAGE);
+		_chain_storage[i].append(0);
+
 # Getters and Setters with some logic
-func get_width():
+func get_width() -> int:
 	return len(_static_blocks);
 
-func get_block(col : int, row : int):
+func get_block(col : int, row : int) -> int:
 	if len(_static_blocks[col]) <= row:
 		return -1;
 
@@ -150,7 +169,7 @@ func get_block(col : int, row : int):
 func is_settled() -> bool:
 	return not _queue_check;
 
-func set_block(col : int, row : int, to : int):
+func set_block(col : int, row : int, to : int) -> void:
 	while len(_static_blocks[col]) <= row:
 		_static_blocks[col].append(-1);
 		_chain_storage[col].append(1);
@@ -166,19 +185,19 @@ func column_to_string(col : int) -> String:
 func to_string() -> String:
 	var out = "";
 	
-	for col in range(len(_static_blocks)):
+	for col in range(get_width()):
 		out += "Row " + str(col) + ": ";
 		out += column_to_string(col);
 		out += "\n";
 	return out.trim_suffix("\n");
 
 # Static Helpers
-static func detect_in_a_row(row):
-	var out = []
+static func detect_in_a_row(row) -> Array:
+	var out = [];
 	
 	var doubles = [];
 	for i in range(0, len(row)-1):
-		doubles.append(row[i] == row[i+1] and (not row[i] in SPECIAL_BLOCKS));
+		doubles.append(row[i] == row[i+1] and (not row[i] in CANNOT_CLEAR));
 	for i in range(0, len(doubles)-1):
 		if doubles[i] and doubles[i+1]:
 			for j in range(i, i+3):
@@ -187,7 +206,7 @@ static func detect_in_a_row(row):
 	
 	return out;
 
-static func detect_in_jagged(jagged_array):
+static func detect_in_jagged(jagged_array) -> Array:
 	var out = [];
 	var max_height_col = 0;
 	
@@ -211,7 +230,26 @@ static func detect_in_jagged(jagged_array):
 	
 	return out;
 
-static func random_with_bans(limit : int, banned : Array):
+static func union_nearby_garbage(jagged_array : Array, clears : Array) -> Array:
+	var out = clears.duplicate(false);
+
+	for garbage_x in range(len(jagged_array)):
+		for garbage_y in range(len(jagged_array[garbage_x])):
+			if jagged_array[garbage_x][garbage_y] != GARBAGE:
+				continue;
+			
+			var break_out = false;
+			for i in range(-1, 2):
+				for j in range(-1, 2):
+					if Vector2(garbage_x + i, garbage_y + j) in clears:
+						out.append(Vector2(garbage_x, garbage_y));
+						break_out = true;
+						break; # for j
+				if break_out:
+					break; # for i, still in garbage_xy loop
+	return out;
+
+static func random_with_bans(limit : int, banned : Array) -> int:
 	banned.sort();
 	var pick = randi() % (limit - len(banned));
 	for ban in banned:

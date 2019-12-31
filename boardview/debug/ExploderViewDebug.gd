@@ -14,7 +14,9 @@ func _init_custom(model : Exploder) -> void:
 	
 	for i in range(len(_model._clears)):
 		var vec = _model._clears[i];
-		self.set_cell(vec.x, vec.y, _model._colors[i]);
+		var color = _model._colors[i];
+		color = color if color >= 0 else 6;
+		self.set_cell(vec.x, vec.y, color);
 
 # Called when the node enters the scene tree for the first time.
 func _process(delta) -> void:

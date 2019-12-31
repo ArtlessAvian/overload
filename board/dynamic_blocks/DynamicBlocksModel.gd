@@ -45,7 +45,7 @@ func do_fall(where : Vector2, chain : int):
 	
 	var slice = [];
 	for row in range(where.y, len(_static_blocks[where.x])):
-		if get_block(where.x, row) in SPECIAL_BLOCKS:
+		if get_block(where.x, row) in CANNOT_FALL:
 			break;
 		slice.append(get_block(where.x, row));
 		set_block(where.x, row, -1);
@@ -70,6 +70,26 @@ func add_faller(faller : Faller):
 func on_Faller_done_falling(faller : Faller) -> void:
 	self._queue_check = true;
 	_fallers.erase(faller);
+	
+func receive_garbage(amount : int) -> void:
+	# TODO: Replace old code
+	var where = Vector2(0, 12);
+	for col in _static_blocks:
+		where.y = max(where.y, len(col));
+
+	var shuffle = range(get_width());
+	shuffle.shuffle();
+
+	for i in range(min(amount, get_width())):
+		var blocks = [];
+# warning-ignore:integer_division
+		for _j in range(amount/get_width()):
+			blocks.append(GARBAGE);
+		if i < amount % get_width():
+			blocks.append(GARBAGE);
+#
+		where.x = shuffle[i];
+		add_new_faller(where, blocks, 0);
 
 func clean_trailing_empty() -> void:
 	for col in range(get_width()):

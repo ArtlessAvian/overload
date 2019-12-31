@@ -35,6 +35,7 @@ func _physics_process(delta: float) -> void:
 			self._stop_raise_requested = false;
 			if get_height() >= 12:
 				self._partial_raise = 0;
+			self._dynamic_blocks.receive_garbage(10);
 	else:
 		# Something is falling or the board is full
 		self._raise_requested = false;
@@ -49,24 +50,6 @@ func request_raise() -> void:
 func request_stop_raise() -> void:
 #	print("received request")
 	self._stop_raise_requested = true;
-
-func receive_garbage(amount : int) -> void:
-	# TODO: Replace old code
-	var where = Vector2(0, 12);
-	for col in _dynamic_blocks._static_blocks:
-		where.y = max(where.y, len(col));
-
-	var shuffle = range(len(_dynamic_blocks._static_blocks));
-	shuffle.shuffle();
-
-	for i in range(min(amount, len(_dynamic_blocks._static_blocks))):
-		var blocks = [];
-# warning-ignore:integer_division
-		for _j in range(amount/len(_dynamic_blocks._static_blocks) + int(i < amount % len(_dynamic_blocks._static_blocks))):
-			blocks.append(0);
-
-		where.x = shuffle.pop_back();
-		_dynamic_blocks.add_new_faller(where, blocks, 0);
 
 func new_faller(faller : Faller) -> void:
 	faller.set_physics_process(false);

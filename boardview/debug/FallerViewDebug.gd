@@ -6,7 +6,9 @@ func _init_custom(model) -> void:
 	_model = model;
 	position.x = _model._x * 40;
 	for i in range(len(_model._slice)):
-		self.set_cell(0, i, _model._slice[i]);
+		var el = _model._slice[i];
+		el = el if el >= 0 else 6;
+		self.set_cell(0, i, el);
 
 # Called when the node enters the scene tree for the first time.
 func _process(delta) -> void:
