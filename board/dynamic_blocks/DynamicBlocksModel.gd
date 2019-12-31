@@ -35,6 +35,7 @@ func on_Exploder_done_exploding(exploder, clears, colors, chain):
 		do_fall(clears[i] + Vector2.DOWN, chain + 1);
 		# DOWN is y+. UP is y-.
 		# Nice.
+	self._queue_check = true;
 
 func do_fall(where : Vector2, chain : int):
 	# warning-ignore-all:narrowing_conversion

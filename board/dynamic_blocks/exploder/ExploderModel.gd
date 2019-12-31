@@ -30,8 +30,10 @@ func _physics_process(delta: float) -> void:
 	
 	exist_time += delta;
 	if exist_time >= EXPLODE_DELAY + EXPLODE_PERIOD * len(_clears):
-		for vec in _clears:
-			_static_blocks[vec.x][vec.y] = -1;
+		for i in len(_clears):
+			var vec = _clears[i];
+			var garbage = _colors[i] < 0;
+			_static_blocks[vec.x][vec.y] = -1 if not garbage else randi() % 5; # TODO: figure out how to get num colors here
 		
 		self.emit_signal("done_exploding", self, _clears, _colors, _chain);
 		self.queue_free();
