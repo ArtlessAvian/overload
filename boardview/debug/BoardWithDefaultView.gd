@@ -4,7 +4,7 @@ class_name BoardDefaultView
 var _view : Node2D;
 
 func _ready() -> void:
-	self._view = load("res://board/BoardViewDebug.tscn").instance();
+	self._view = load("res://boardview/debug/BoardViewDebug.tscn").instance();
 	self.add_child(self._view);
 	self._view.model_path = self.get_path();
 	print(self._view.model_path)

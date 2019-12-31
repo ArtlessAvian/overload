@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Board",
 "class": "BoardDefaultView",
 "language": "GDScript",
-"path": "res://board/BoardWithDefaultView.gd"
+"path": "res://boardview/debug/BoardWithDefaultView.gd"
 }, {
 "base": "Node",
 "class": "Cursor",

@@ -1,7 +1,7 @@
-extends "blocks/BlocksViewDebug.gd"
+extends "BlocksViewDebug.gd"
 
-const FALLER_VIEW_SCENE = preload("res://board/dynamic_blocks/faller/FallerViewDebug.tscn");
-const EXPLODER_VIEW_SCENE = preload("res://board/dynamic_blocks/exploder/ExploderViewDebug.tscn");
+const FALLER_VIEW_SCENE = preload("res://boardview/debug/FallerViewDebug.tscn");
+const EXPLODER_VIEW_SCENE = preload("res://boardview/debug/ExploderViewDebug.tscn");
 
 #var fallers = {};
 

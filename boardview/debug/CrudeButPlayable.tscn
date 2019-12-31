@@ -2,8 +2,8 @@
 
 [ext_resource path="res://board/dynamic_blocks/DynamicBlocksModel.gd" type="Script" id=1]
 [ext_resource path="res://board/cursor/CursorModel.gd" type="Script" id=2]
-[ext_resource path="res://board/dynamic_blocks/DynamicBlocksViewDebug.tscn" type="PackedScene" id=3]
-[ext_resource path="res://board/cursor/CursorViewDebug.tscn" type="PackedScene" id=4]
+[ext_resource path="res://boardview/debug/DynamicBlocksViewDebug.tscn" type="PackedScene" id=3]
+[ext_resource path="res://boardview/debug/CursorViewDebug.tscn" type="PackedScene" id=4]
 
 [node name="BoardModel" type="Node2D"]
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://assets/Test2.tres" type="TileSet" id=1]
-[ext_resource path="res://board/dynamic_blocks/exploder/ExploderViewDebug.gd" type="Script" id=2]
+[ext_resource path="res://boardview/debug/ExploderViewDebug.gd" type="Script" id=2]
 
 [node name="ExploderView" type="TileMap"]
 self_modulate = Color( 0.411765, 0.411765, 0.411765, 1 )
