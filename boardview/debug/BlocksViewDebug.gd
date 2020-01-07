@@ -1,15 +1,17 @@
 extends Node2D
 
-export (NodePath) var model_path : NodePath;
+var model : Node;
 
 # Called when the node enters the scene tree for the first time.
-#func _ready() -> void:
-#	var model : Blocks = self.get_node(model_path);
+func _ready() -> void:
+	if (get_parent() == get_viewport()):
+		print("Testing Blocks");
+		model = Blocks.new();
+		model.name = "Blocks";
+		add_child(model);
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	var model : Blocks = self.get_node(model_path);
-	
 	$TileMap.clear();
 	for col in range(model.get_width()):
 		for row in range(-3, 12):

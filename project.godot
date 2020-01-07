@@ -19,10 +19,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://board/BoardModel.gd"
 }, {
-"base": "Board",
-"class": "BoardDefaultView",
+"base": "Node2D",
+"class": "BoardViewDebug",
 "language": "GDScript",
-"path": "res://boardview/debug/BoardWithDefaultView.gd"
+"path": "res://boardview/debug/BoardViewDebug.gd"
 }, {
 "base": "Node",
 "class": "Cursor",
@@ -34,12 +34,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://board/dynamic_blocks/DynamicBlocksModel.gd"
 }, {
-"base": "Node2D",
+"base": "Node",
 "class": "Exploder",
 "language": "GDScript",
 "path": "res://board/dynamic_blocks/exploder/ExploderModel.gd"
 }, {
-"base": "Node2D",
+"base": "Node",
 "class": "Faller",
 "language": "GDScript",
 "path": "res://board/dynamic_blocks/faller/FallerModel.gd"
@@ -47,7 +47,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Blocks": "",
 "Board": "",
-"BoardDefaultView": "",
+"BoardViewDebug": "",
 "Cursor": "",
 "DynamicBlocks": "",
 "Exploder": "",
