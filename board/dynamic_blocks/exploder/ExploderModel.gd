@@ -2,8 +2,8 @@ extends Node
 class_name Exploder
 signal done_exploding
 
-const EXPLODE_DELAY = 0.5;
-const EXPLODE_PERIOD = 0.1;
+const EXPLODE_DELAY = 1;
+const EXPLODE_PERIOD = 0.16;
 
 var _clears : Array;
 var _colors : Array;

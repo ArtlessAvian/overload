@@ -2,17 +2,22 @@ extends TileMap
 
 var model : Exploder;
 var first_y : int;
+var explode_time : float;
 
 func _ready() -> void:
 	if (get_parent() == get_viewport()):
+		# Add Camera
+		var cam = Camera2D.new()
+		cam.current = true;
+		add_child(cam);
+		# Add Model
 		print("Testing Exploder");
-		_init_custom(Exploder.new([Vector2(0, 0), Vector2(0, 1), Vector2(0, 2)], [[1,2,3,4,5]]));
-		add_child(model);
+		var new_model = Exploder.new([Vector2(0, 0), Vector2(0, 1), Vector2(0, 2)], [[1,2,3,4,5]]);
+		add_child(new_model);
+		set_model(new_model);
 
-func _init_custom(new_model : Exploder):
+func set_model(new_model : Exploder):
 	model = new_model;
-	model.name = "Exploder";
-	# AHHHHHHHH
 	
 	first_y = model._clears[0].y;
 	$PanelContainer/Label.text = str(len(model._clears), " x", model._chain);
@@ -33,3 +38,8 @@ func _process(delta) -> void:
 		return;
 	
 	self.position.y = round(-40 * (model._clears[0].y - first_y));
+	self.explode_time += delta;
+	if (explode_time > Exploder.EXPLODE_DELAY + Exploder.EXPLODE_PERIOD/2):
+		explode_time -= Exploder.EXPLODE_PERIOD;
+		if (not self.get_used_cells().empty()):
+			self.set_cellv(self.get_used_cells()[0], -1);

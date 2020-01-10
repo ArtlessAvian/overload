@@ -10,7 +10,8 @@ var _partial_raise : float = 0;
 func _ready() -> void:
 	var dynamic_blocks = DynamicBlocks.new(6);
 	dynamic_blocks.name = "DynamicBlocks";
-	dynamic_blocks.connect("new_faller", self, "new_faller");
+	dynamic_blocks.connect("new_faller", self, "new_faller"); # To hijack it
+#	dynamic_blocks.connect("clear", self, "send_garbage"); 
 	self.add_child(dynamic_blocks);
 	
 	var cursor = Cursor.new();
@@ -58,3 +59,6 @@ func get_height() -> int:
 	for col in $DynamicBlocks._static_blocks:
 		out = max(out, len(col))
 	return out;
+
+#func send_garbage():
+#	pass
