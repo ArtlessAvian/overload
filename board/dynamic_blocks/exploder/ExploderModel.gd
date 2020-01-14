@@ -7,6 +7,7 @@ const EXPLODE_PERIOD = 0.16;
 
 var _clears : Array;
 var _colors : Array;
+var _explode_into : Array;
 var _static_blocks : Array;
 
 var _chain : int;
@@ -19,8 +20,11 @@ func _init(clears : Array, static_blocks : Array, chain : int = 1) -> void:
 	_chain = chain;
 	
 	_colors = [];
+	_explode_into = [];
 	for vec in _clears:
 		_colors.append(_static_blocks[vec.x][vec.y]);
+		var garbage = _static_blocks[vec.x][vec.y] < 0;
+		_explode_into.append(-1 if not garbage else randi() % 5);
 		_static_blocks[vec.x][vec.y] = -2;
 
 func _physics_process(delta: float) -> void:
@@ -32,8 +36,7 @@ func _physics_process(delta: float) -> void:
 	if exist_time >= EXPLODE_DELAY + EXPLODE_PERIOD * len(_clears):
 		for i in len(_clears):
 			var vec = _clears[i];
-			var garbage = _colors[i] < 0;
-			_static_blocks[vec.x][vec.y] = -1 if not garbage else randi() % 5; # TODO: figure out how to get num colors here
+			_static_blocks[vec.x][vec.y] = _explode_into[i];
 		
 		self.emit_signal("done_exploding", self, _clears, _colors, _chain);
 		self.queue_free();

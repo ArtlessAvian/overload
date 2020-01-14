@@ -26,6 +26,7 @@ func swap(where : Vector2):
 
 func do_clears(clears : Array, max_chain : int):
 	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, _static_blocks, max_chain);
+	exploder.name = "Exploder";
 	exploder.connect("done_exploding", self, "on_Exploder_done_exploding");
 	$Exploders.add_child(exploder);
 	self.emit_signal("new_exploder", exploder);
@@ -65,8 +66,9 @@ func add_new_faller(where : Vector2, slice : Array, chain : int):
 	add_faller(faller);
 
 func add_faller(faller : Faller):
-	$Fallers.add_child(faller);
+	faller.name = "Faller"
 	faller.connect("done_falling", self, "on_Faller_done_falling");
+	$Fallers.add_child(faller);
 	self.emit_signal("new_faller", faller);
 
 func on_Faller_done_falling(faller : Faller) -> void:

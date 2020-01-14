@@ -43,6 +43,6 @@ func _process(delta) -> void:
 	self.explode_time += delta;
 	if (explode_time > Exploder.EXPLODE_DELAY + Exploder.EXPLODE_PERIOD/2):
 		explode_time -= Exploder.EXPLODE_PERIOD;
-		# TODO: make the blocks change to the block they become.
-#		if (_model.):
-#			self.set_cellv(self.get_used_cells()[0], -1);
+		if (explode_count < len(model._clears)):
+			self.set_cellv(model._clears[explode_count], model._explode_into[explode_count]);
+		explode_count += 1;

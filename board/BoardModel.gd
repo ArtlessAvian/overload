@@ -43,6 +43,9 @@ func _physics_process(delta: float) -> void:
 		
 	for faller in $DynamicBlocks/Fallers.get_children():
 		faller._physics_process(delta * _faller_speed);
+	
+	if (Input.is_action_just_pressed("ui_accept")):
+		$DynamicBlocks.receive_garbage(10);
 
 func request_raise() -> void:
 	self._raise_requested = true;
