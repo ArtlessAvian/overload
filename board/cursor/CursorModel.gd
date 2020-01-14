@@ -5,7 +5,6 @@ signal raise_requested; # Vector2.
 signal stop_raise_requested;
 
 var _player : String;
-var _blocks : Blocks;
 var _bounds : Vector2;
 var _position : Vector2;
 

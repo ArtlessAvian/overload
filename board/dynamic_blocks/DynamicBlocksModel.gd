@@ -42,10 +42,10 @@ func on_Exploder_done_exploding(exploder, clears, colors, chain):
 
 func do_fall(where : Vector2, chain : int):
 	# warning-ignore-all:narrowing_conversion
-	if get_block(where.x, where.y-1) != -1:
+#	if get_block(where.x, where.y-1) != -1:
 		# Not sure if returning silently when theres nothing to fall is a good idea.
 		# Probably nbd.
-		return;
+#		return;
 	
 	var slice = [];
 	for row in range(where.y, len(_static_blocks[where.x])):

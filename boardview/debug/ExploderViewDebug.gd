@@ -2,7 +2,9 @@ extends TileMap
 
 var model : Exploder;
 var first_y : int;
+
 var explode_time : float;
+var explode_count : int;
 
 func _ready() -> void:
 	if (get_parent() == get_viewport()):
@@ -41,5 +43,6 @@ func _process(delta) -> void:
 	self.explode_time += delta;
 	if (explode_time > Exploder.EXPLODE_DELAY + Exploder.EXPLODE_PERIOD/2):
 		explode_time -= Exploder.EXPLODE_PERIOD;
-		if (not self.get_used_cells().empty()):
-			self.set_cellv(self.get_used_cells()[0], -1);
+		# TODO: make the blocks change to the block they become.
+#		if (_model.):
+#			self.set_cellv(self.get_used_cells()[0], -1);

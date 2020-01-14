@@ -24,6 +24,7 @@ func _process(delta: float) -> void:
 	for col in range(model.get_width()):
 		for row in range(-1, 12):
 			var tile = model.get_block(col, row);
+			tile = tile if not tile in [Blocks.GARBAGE] else 6;
 			tile = tile if not tile in [-2, -3] else -1;
 			$TileMap.set_cell(col, row, tile);
 
