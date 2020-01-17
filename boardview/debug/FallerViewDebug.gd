@@ -22,6 +22,8 @@ func set_model(new_model) -> void:
 		var el = model._slice[i];
 		el = el if el >= 0 else 6;
 		self.set_cell(0, i, el);
+	
+	_process(0);
 
 func _process(delta) -> void:
 	if (not is_instance_valid(model)) or model.is_queued_for_deletion():

@@ -19,11 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://board/BoardModel.gd"
 }, {
-"base": "Node2D",
-"class": "BoardViewDebug",
-"language": "GDScript",
-"path": "res://boardview/debug/BoardViewDebug.gd"
-}, {
 "base": "Node",
 "class": "Cursor",
 "language": "GDScript",
@@ -43,15 +38,20 @@ _global_script_classes=[ {
 "class": "Faller",
 "language": "GDScript",
 "path": "res://board/dynamic_blocks/faller/FallerModel.gd"
+}, {
+"base": "Node",
+"class": "Hoverer",
+"language": "GDScript",
+"path": "res://board/dynamic_blocks/hoverer/HovererModel.gd"
 } ]
 _global_script_class_icons={
 "Blocks": "",
 "Board": "",
-"BoardViewDebug": "",
 "Cursor": "",
 "DynamicBlocks": "",
 "Exploder": "",
-"Faller": ""
+"Faller": "",
+"Hoverer": ""
 }
 
 [application]

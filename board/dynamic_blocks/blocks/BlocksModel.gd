@@ -96,10 +96,10 @@ func swap(where : Vector2):
 	set_block(where.x, where.y, get_block(where.x+1, where.y));
 	set_block(where.x+1, where.y, temp);
 	
-	if get_block(where.x, where.y) == -1:
+	if get_block(where.x, where.y) == AIR: # or get_block(where.x+1, where.y) == AIR:
 		do_fall(where + Vector2.DOWN, 1);
 		do_fall(where + Vector2.RIGHT, 1);
-	if get_block(where.x+1, where.y) == -1:
+	if get_block(where.x+1, where.y) == AIR:
 		do_fall(where, 1);
 		do_fall(where + Vector2.ONE, 1);
 	

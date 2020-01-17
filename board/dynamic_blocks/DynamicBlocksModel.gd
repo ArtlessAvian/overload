@@ -3,19 +3,22 @@ class_name DynamicBlocks
 signal new_exploder; # Exploder Model
 signal new_faller; # Faller Model
 
-const EXPLODER_SCRIPT = preload("res://board/dynamic_blocks/exploder/ExploderModel.gd");
-const FALLER_SCRIPT = preload("res://board/dynamic_blocks/faller/FallerModel.gd");
+#const EXPLODER_SCRIPT = preload("res://board/dynamic_blocks/exploder/ExploderModel.gd");
+#const FALLER_SCRIPT = preload("res://board/dynamic_blocks/faller/FallerModel.gd");
 
 func _init(width : int = 6) -> void:
 	._init(width);
 	
 	var fallers = Node.new();
 	var exploders = Node.new();
+	var hoverers = Node.new();
 	fallers.name = "Fallers";
 	exploders.name = "Exploders";
+	hoverers.name = "Hoverers";
 	add_child(fallers);
 	add_child(exploders);
-	
+	add_child(hoverers);
+
 func swap(where : Vector2):
 	for faller in $Fallers.get_children():
 		if faller._x == where.x or faller._x == where.x+1:
@@ -25,16 +28,24 @@ func swap(where : Vector2):
 	.swap(where);
 
 func do_clears(clears : Array, max_chain : int):
-	var exploder : Exploder = EXPLODER_SCRIPT.new(clears, _static_blocks, max_chain);
+	var exploder : Exploder = Exploder.new(clears, _static_blocks, max_chain);
 	exploder.name = "Exploder";
 	exploder.connect("done_exploding", self, "on_Exploder_done_exploding");
 	$Exploders.add_child(exploder);
 	self.emit_signal("new_exploder", exploder);
 
+var agh = 0;
 func on_Exploder_done_exploding(exploder, clears, colors, chain):
 	$Exploders.remove_child(exploder);
 	clean_trailing_empty();
 	# Reverse order for descending y.
+	
+	var hoverer : Hoverer = Hoverer.new(clears, chain);
+	hoverer.name = "Hoverer";
+	hoverer.connect("done_hovering", self, "on_Hoverer_done_hovering");
+	$Hoverers.add_child(hoverer);
+
+func on_Hoverer_done_hovering(hoverer, clears, chain):
 	for i in range(len(clears)-1, -1, -1):
 		do_fall(clears[i] + Vector2.DOWN, chain + 1);
 		# DOWN is y+. UP is y-.
@@ -43,10 +54,10 @@ func on_Exploder_done_exploding(exploder, clears, colors, chain):
 
 func do_fall(where : Vector2, chain : int):
 	# warning-ignore-all:narrowing_conversion
-#	if get_block(where.x, where.y-1) != -1:
+	if get_block(where.x, where.y-1) != -1:
 		# Not sure if returning silently when theres nothing to fall is a good idea.
 		# Probably nbd.
-#		return;
+		return;
 	
 	var slice = [];
 	for row in range(where.y, len(_static_blocks[where.x])):
@@ -62,7 +73,7 @@ func do_fall(where : Vector2, chain : int):
 	add_new_faller(where, slice, chain);
 
 func add_new_faller(where : Vector2, slice : Array, chain : int):
-	var faller : Faller = FALLER_SCRIPT.new(where, slice, _static_blocks[where.x], _chain_storage[where.x], chain);
+	var faller : Faller = Faller.new(where, slice, _static_blocks[where.x], _chain_storage[where.x], chain);
 	add_faller(faller);
 
 func add_faller(faller : Faller):

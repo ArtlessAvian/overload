@@ -30,5 +30,10 @@ func _process(delta: float) -> void:
 
 	$TileMap2.clear();
 	for col in range(model.get_width()):
-		for row in range(len(model._chain_storage[col])):
-			$TileMap2.set_cell(col, row, model._chain_storage[col][row]);
+#		for row in range(len(model._chain_storage[col])):
+#			$TileMap2.set_cell(col, row, model._chain_storage[col][row]);
+		for row in range(-1, 12):
+			var tile = model.get_block(col, row);
+#			tile = tile if not tile in [Blocks.GARBAGE] else 6;
+			tile = tile if tile >= 0 else -tile;
+			$TileMap2.set_cell(col, row, tile);
