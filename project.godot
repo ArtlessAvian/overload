@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Cursor",
+"class": "AICursor",
+"language": "GDScript",
+"path": "res://board/cursor/AICursorModel.gd"
+}, {
 "base": "Node",
 "class": "Blocks",
 "language": "GDScript",
@@ -45,6 +50,7 @@ _global_script_classes=[ {
 "path": "res://board/dynamic_blocks/hoverer/HovererModel.gd"
 } ]
 _global_script_class_icons={
+"AICursor": "",
 "Blocks": "",
 "Board": "",
 "Cursor": "",

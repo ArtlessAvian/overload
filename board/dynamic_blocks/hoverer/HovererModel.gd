@@ -17,7 +17,7 @@ func _physics_process(delta: float) -> void:
 		# GUT doesnt free stuff. >:(
 	
 	exist_time += delta;
-	if exist_time >= 0.2:
+	if exist_time >= 0.5:
 		self.emit_signal("done_hovering", self, _clears, _chain);
 		self.queue_free();
 

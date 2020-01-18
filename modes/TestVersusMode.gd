@@ -6,7 +6,7 @@ func _ready() -> void:
 	add_child(b1);
 	$BoardView.set_model(b1);
 	
-	var b2 : Board = Board.new();
+	var b2 : Board = Board.new(true);
 	b2.name = "Board2"
 	add_child(b2);
 	$BoardView2.set_model(b2);

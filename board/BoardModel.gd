@@ -7,14 +7,14 @@ var _faller_speed = 5;
 
 var _partial_raise : float = 0;
 
-func _ready() -> void:
+func _init(ai : bool = false) -> void:
 	var dynamic_blocks = DynamicBlocks.new(6);
 	dynamic_blocks.name = "DynamicBlocks";
 	dynamic_blocks.connect("new_faller", self, "new_faller"); # To hijack it
 #	dynamic_blocks.connect("clear", self, "send_garbage"); 
 	self.add_child(dynamic_blocks);
 	
-	var cursor = Cursor.new();
+	var cursor = Cursor.new() if not ai else AICursor.new();
 	cursor.name = "Cursor";
 	cursor._bounds.x = 6;
 	cursor.connect("raise_requested", self, "request_raise");
