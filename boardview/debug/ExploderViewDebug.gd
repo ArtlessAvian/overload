@@ -41,7 +41,7 @@ func _process(delta) -> void:
 	
 	self.position.y = round(-40 * (model._clears[0].y - first_y));
 	self.explode_time += delta;
-	if (explode_time > Exploder.EXPLODE_DELAY + Exploder.EXPLODE_PERIOD/2):
+	if (explode_time > Exploder.EXPLODE_DELAY + Exploder.EXPLODE_PERIOD):
 		explode_time -= Exploder.EXPLODE_PERIOD;
 		if (explode_count < len(model._clears)):
 			self.set_cellv(model._clears[explode_count], model._explode_into[explode_count]);

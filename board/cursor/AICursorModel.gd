@@ -51,6 +51,6 @@ func _physics_process(delta: float) -> void:
 	if ($"..".get_height() < 10 and $"../DynamicBlocks".is_settled()):
 		request_raise();
 	else:
-		if (Engine.get_frames_drawn() % 5 == 0):
+		if (Engine.get_frames_drawn() % 1 == 0):
 			_position = Vector2(randi() % int(_bounds.x-1), randi() % int(_bounds.y));
 			request_swap();
