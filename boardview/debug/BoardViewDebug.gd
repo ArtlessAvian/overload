@@ -26,3 +26,9 @@ func _process(delta : float) -> void:
 #	$"DynamicBlocksViewDebug".position.x = 20 * (6 - len(get_node(model_path)._dynamic_blocks._static_blocks));
 	
 	$"DynamicBlocksViewDebug".position.y = round(model._partial_raise * -40);
+	$Label.text = ""
+	$Label.text += "Grace: " + str(model._grace_timer);
+	$Label.text += "\n";
+	$Label.text += "Pause: " + str(model._pause_timer);
+	
+	$"U DIED".visible = model._lost;

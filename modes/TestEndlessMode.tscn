@@ -17,14 +17,13 @@ margin_left = -400.0
 margin_top = -50.0
 margin_right = -228.0
 margin_bottom = 49.0
-text = "Hi. Overload demo.
-Go for Combos and Chains!
-
-Cursoring: WASD
+rect_scale = Vector2( 2, 2 )
+text = "Cursoring: WASD
 Swapping: JN
     Raising: K"
 
 [node name="Label2" type="Label" parent="."]
+visible = false
 margin_left = 150.0
 margin_top = -100.0
 margin_right = 322.0

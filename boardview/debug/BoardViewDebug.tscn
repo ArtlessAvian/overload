@@ -44,3 +44,21 @@ mode = 3
 range_item_cull_mask = 1024
 shadow_enabled = true
 shadow_item_cull_mask = 1024
+
+[node name="Label" type="Label" parent="."]
+margin_left = 68.6967
+margin_top = 30.2517
+margin_right = 152.697
+margin_bottom = 44.2517
+text = "aaaaaaaaaaaa"
+
+[node name="U DIED" type="Label" parent="."]
+margin_left = 21.0
+margin_top = -380.0
+margin_right = 105.0
+margin_bottom = -366.0
+rect_rotation = 45.0
+rect_scale = Vector2( 4, 4 )
+text = "U DIED LOL"
+align = 1
+uppercase = true

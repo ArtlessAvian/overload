@@ -114,7 +114,10 @@ func clean_trailing_empty() -> void:
 
 # Getters
 func is_settled() -> bool:
-	return $Fallers.get_child_count() == 0 and $Exploders.get_child_count() == 0 and .is_settled();
+	return $Fallers.get_child_count() == 0 \
+		and $Exploders.get_child_count() == 0 \
+		and $Hoverers.get_child_count() == 0 \
+		and .is_settled();
 
 # Debug
 func column_to_string(col : int) -> String:
