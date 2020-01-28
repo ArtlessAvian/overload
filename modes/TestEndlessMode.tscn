@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://modes/TestEndlessMode.gd" type="Script" id=1]
 [ext_resource path="res://boardview/debug/BoardViewDebug.tscn" type="PackedScene" id=2]
+[ext_resource path="res://modes/Pause.tscn" type="PackedScene" id=3]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
@@ -11,6 +12,8 @@ current = true
 
 [node name="BoardView" parent="." instance=ExtResource( 2 )]
 position = Vector2( -120, 240 )
+
+[node name="Pause" parent="." instance=ExtResource( 3 )]
 
 [node name="Label" type="Label" parent="."]
 margin_left = -400.0
@@ -23,11 +26,10 @@ Swapping: JN
     Raising: K"
 
 [node name="Label2" type="Label" parent="."]
-visible = false
-margin_left = 150.0
-margin_top = -100.0
-margin_right = 322.0
-margin_bottom = -1.0
+margin_left = 157.366
+margin_top = -109.822
+margin_right = 499.366
+margin_bottom = -10.8219
 text = "Tips:
 * Raise the blocks if you're comfortable/bored/daring.
 * Chains are cooler than combos.
